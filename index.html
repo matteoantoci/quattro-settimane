@@ -1,0 +1,3512 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Quattro settimane a confronto</title>
+    <style>
+      :root {
+        --paper: #f3f5f1;
+        --ink: #1f2924;
+        --muted: #5f6d64;
+        --line: #d3dcd5;
+        --cell: #ffffff;
+        --accent: #2f6b3a;
+        --accent-ink: #ffffff;
+        --pick: #ffd950;
+        --pick-ink: #3d2e00;
+        --soft: #e8efe9;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --paper: #151b17;
+          --ink: #e4ebe5;
+          --muted: #9aa89f;
+          --line: #2f3a33;
+          --cell: #1c2420;
+          --accent: #7fc28b;
+          --accent-ink: #0f1a12;
+          --pick: #e0b03c;
+          --pick-ink: #1a1400;
+          --soft: #22302a;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font:
+          15px/1.45 'Avenir Next',
+          'Segoe UI',
+          system-ui,
+          sans-serif;
+      }
+      header {
+        padding: 28px 32px 18px;
+        border-bottom: 1px solid var(--line);
+      }
+      h1 {
+        font-size: 30px;
+        margin: 0 0 6px;
+        letter-spacing: -0.01em;
+        text-wrap: balance;
+      }
+      .lede {
+        max-width: 66ch;
+        color: var(--muted);
+        margin: 0 0 14px;
+      }
+      .who {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .who input {
+        font: inherit;
+        padding: 6px 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--cell);
+        color: var(--ink);
+        min-width: 220px;
+      }
+      nav {
+        display: flex;
+        gap: 6px;
+        padding: 14px 32px;
+        border-bottom: 1px solid var(--line);
+        position: sticky;
+        top: 0;
+        background: var(--paper);
+        z-index: 2;
+        flex-wrap: wrap;
+      }
+      nav button {
+        font: inherit;
+        font-weight: 600;
+        padding: 8px 14px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--cell);
+        color: var(--ink);
+        cursor: pointer;
+      }
+      nav button[aria-selected='true'] {
+        background: var(--accent);
+        color: var(--accent-ink);
+        border-color: var(--accent);
+      }
+      nav button:focus-visible,
+      button:focus-visible,
+      input:focus-visible,
+      textarea:focus-visible {
+        outline: 3px solid var(--pick);
+        outline-offset: 2px;
+      }
+      main {
+        padding: 22px 32px 60px;
+        display: grid;
+        gap: 34px;
+      }
+      .brief {
+        display: grid;
+        gap: 22px;
+      }
+      .brief[hidden] {
+        display: none;
+      }
+      .card {
+        background: var(--cell);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 16px 18px;
+      }
+      .brief-text {
+        font-size: 17px;
+        white-space: pre-wrap;
+        margin: 0;
+      }
+      .answers {
+        color: var(--muted);
+        margin: 8px 0 0;
+        font-size: 14px;
+      }
+      .answers span {
+        display: inline-block;
+        padding: 2px 8px;
+        border: 1px dashed var(--line);
+        border-radius: 6px;
+        margin: 4px 6px 0 0;
+      }
+      .plan {
+        display: grid;
+        gap: 12px;
+      }
+      .plan-head {
+        display: flex;
+        align-items: baseline;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .label {
+        font-size: 26px;
+        font-weight: 700;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: var(--soft);
+        color: var(--ink);
+      }
+      .check {
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+      .gridwrap {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      table {
+        border-collapse: collapse;
+        min-width: 1100px;
+        width: 100%;
+        font-size: 13px;
+      }
+      th,
+      td {
+        border-bottom: 1px solid var(--line);
+        border-right: 1px solid var(--line);
+        padding: 8px 9px;
+        vertical-align: top;
+        text-align: left;
+      }
+      th {
+        background: var(--soft);
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+      }
+      tr > *:last-child {
+        border-right: 0;
+      }
+      tbody tr:last-child > * {
+        border-bottom: 0;
+      }
+      th.meal {
+        width: 92px;
+        background: var(--soft);
+      }
+      td ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 3px;
+      }
+      td li b {
+        font-weight: 600;
+      }
+      td li .q {
+        font-variant-numeric: tabular-nums;
+        color: var(--muted);
+      }
+      td li .n {
+        color: var(--muted);
+        font-style: italic;
+      }
+      .score {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px 22px;
+        align-items: start;
+      }
+      .crit {
+        display: grid;
+        gap: 4px;
+      }
+      .crit .name {
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .crit .hint {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .stars {
+        display: flex;
+        gap: 2px;
+      }
+      .stars input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .stars label {
+        cursor: pointer;
+        font-size: 22px;
+        color: var(--line);
+        line-height: 1;
+      }
+      .stars label.on {
+        color: var(--pick);
+      }
+      .verdict {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .verdict label {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 5px 9px;
+        cursor: pointer;
+        background: var(--cell);
+      }
+      .verdict input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .verdict label.on {
+        background: var(--accent);
+        color: var(--accent-ink);
+        border-color: var(--accent);
+      }
+      textarea {
+        width: 100%;
+        font: inherit;
+        min-height: 64px;
+        padding: 8px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--cell);
+        color: var(--ink);
+        resize: vertical;
+      }
+      .best {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .best label {
+        font-weight: 700;
+        font-size: 18px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        border: 2px solid var(--line);
+        cursor: pointer;
+      }
+      .best input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .best label.on {
+        background: var(--pick);
+        color: var(--pick-ink);
+        border-color: var(--pick);
+      }
+      footer {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        padding: 16px 32px;
+        border-top: 1px solid var(--line);
+        position: sticky;
+        bottom: 0;
+        background: var(--paper);
+        flex-wrap: wrap;
+      }
+      footer button {
+        font: inherit;
+        font-weight: 600;
+        padding: 9px 14px;
+        border-radius: 8px;
+        border: 1px solid var(--accent);
+        background: var(--accent);
+        color: var(--accent-ink);
+        cursor: pointer;
+      }
+      footer button.quiet {
+        background: var(--cell);
+        color: var(--ink);
+        border-color: var(--line);
+      }
+      .status {
+        color: var(--muted);
+      }
+      @media print {
+        nav,
+        footer,
+        .score,
+        .who,
+        textarea {
+          display: none;
+        }
+        .brief[hidden] {
+          display: grid;
+        }
+        .gridwrap {
+          overflow: visible;
+        }
+        table {
+          min-width: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Quattro settimane a confronto</h1>
+      <p class="lede">
+        Quattro programmi composti dallo stesso strumento sulla stessa richiesta, in ordine casuale. Non si sa chi ha
+        fatto cosa: guarda le settimane come le vedresti su Sifa e dai il tuo giudizio. Le note tra parentesi sono
+        quelle scritte sulle righe.
+      </p>
+      <div class="who">
+        <label for="who">Chi valuta</label><input id="who" placeholder="il tuo nome" />
+        <span class="status" id="saved"></span>
+      </div>
+    </header>
+    <nav id="tabs" role="tablist"></nav>
+    <main id="main"></main>
+    <footer>
+      <button id="export">Scarica i punteggi</button>
+      <button id="copy" class="quiet">Copia i punteggi</button>
+      <span class="status">I punteggi restano in questo browser finché non li scarichi.</span>
+    </footer>
+    <script id="data" type="application/json">
+      [
+        {
+          "id": "b1",
+          "title": "Uomo calabrese, 95 kg",
+          "text": "Dieta per uomo calabrese che deve dimagrire peso 95 altezza 166 cerca di mantenere ricette calabresi\nA mezzogiorno schiscia",
+          "answers": ["Nessuna patologia. Decidi tu le kcal, poi correggo."],
+          "plans": [
+            {
+              "label": "A",
+              "rows": [
+                {
+                  "food": "LATTE DI VACCA PARZIALMENTE SCREMATO UHT",
+                  "qty": "125 g",
+                  "meal": "Colazione",
+                  "note": "1 TAZZA",
+                  "days": ["LUN", "MER", "SAB"]
+                },
+                {
+                  "food": "FETTE BISCOTTATE INTEGRALI",
+                  "qty": "40 g",
+                  "meal": "Colazione",
+                  "note": "4 FETTE",
+                  "days": ["LUN", "MER", "VEN"]
+                },
+                {
+                  "food": "MARMELLATA A RIDOTTO TENORE DI ZUCCHERO",
+                  "qty": "20 g",
+                  "meal": "Colazione",
+                  "note": "1 VELO",
+                  "days": ["LUN", "SAB"]
+                },
+                {
+                  "food": "CAFFÈ DELLA MOKA",
+                  "qty": "45 g",
+                  "meal": "Colazione",
+                  "note": "1 TAZZINA",
+                  "days": ["LUN", "MER", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 0%",
+                  "qty": "170 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO",
+                  "days": ["MAR"]
+                },
+                { "food": "FIOCCHI DI AVENA", "qty": "40 g", "meal": "Colazione", "note": "1 PUGNO", "days": ["MAR"] },
+                { "food": "FRAGOLE", "qty": "150 g", "meal": "Colazione", "note": "", "days": ["MAR"] },
+                {
+                  "food": "Philadelphia Active",
+                  "qty": "30 g",
+                  "meal": "Colazione",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["MER"]
+                },
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 2%",
+                  "qty": "150 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO",
+                  "days": ["GIO"]
+                },
+                { "food": "MUESLI", "qty": "30 g", "meal": "Colazione", "note": "30 G", "days": ["GIO"] },
+                { "food": "PERA", "qty": "150 g", "meal": "Colazione", "note": "1 PERA", "days": ["GIO"] },
+                {
+                  "food": "YOGURT DI LATTE SCREMATO",
+                  "qty": "125 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO",
+                  "days": ["VEN"]
+                },
+                { "food": "FRUTTI DI BOSCO", "qty": "150 g", "meal": "Colazione", "note": "", "days": ["VEN"] },
+                { "food": "FETTE BISCOTTATE", "qty": "30 g", "meal": "Colazione", "note": "3 FETTE", "days": ["SAB"] },
+                { "food": "RICOTTA DI VACCA", "qty": "125 g", "meal": "Colazione", "note": "", "days": ["DOM"] },
+                { "food": "MIELE", "qty": "15 g", "meal": "Colazione", "note": "1 CUCCHIAINO", "days": ["DOM"] },
+                {
+                  "food": "FETTE BISCOTTATE INTEGRALI",
+                  "qty": "30 g",
+                  "meal": "Colazione",
+                  "note": "3 FETTE",
+                  "days": ["DOM"]
+                },
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 0%",
+                  "qty": "170 g",
+                  "meal": "Spuntino",
+                  "note": "1 VASETTO",
+                  "days": ["LUN", "SAB"]
+                },
+                { "food": "ARANCE", "qty": "150 g", "meal": "Spuntino", "note": "1 ARANCIA MEDIA", "days": ["LUN"] },
+                { "food": "BRESAOLA", "qty": "60 g", "meal": "Spuntino", "note": "8 FETTE", "days": ["MAR"] },
+                { "food": "PANE INTEGRALE", "qty": "40 g", "meal": "Spuntino", "note": "1 FETTA", "days": ["MAR"] },
+                {
+                  "food": "Budino proteico Ehrmann",
+                  "qty": "150 g",
+                  "meal": "Spuntino",
+                  "note": "1 VASETTO",
+                  "days": ["MER"]
+                },
+                {
+                  "food": "LATTE DI VACCA SCREMATO UHT",
+                  "qty": "125 g",
+                  "meal": "Spuntino",
+                  "note": "1 TAZZA",
+                  "days": ["GIO"]
+                },
+                { "food": "FETTE BISCOTTATE", "qty": "20 g", "meal": "Spuntino", "note": "2 FETTE", "days": ["GIO"] },
+                {
+                  "food": "RICOTTA PROTEICA SANTALUCIA",
+                  "qty": "130 g",
+                  "meal": "Spuntino",
+                  "note": "1 VASETTO",
+                  "days": ["VEN"]
+                },
+                { "food": "FRUTTA FRESCA", "qty": "150 g", "meal": "Spuntino", "note": "1 FRUTTO", "days": ["VEN"] },
+                { "food": "ALBICOCCHE", "qty": "150 g", "meal": "Spuntino", "note": "3 ALBICOCCHE", "days": ["SAB"] },
+                {
+                  "food": "FRUTTA FRESCA",
+                  "qty": "200 g",
+                  "meal": "Spuntino",
+                  "note": "1 FRUTTO GRANDE",
+                  "days": ["DOM"]
+                },
+                { "food": "PASTA DI SEMOLA INTEGRALE", "qty": "70 g", "meal": "Pranzo", "note": "", "days": ["LUN"] },
+                {
+                  "food": "TONNO AL NATURALE RIOMARE",
+                  "qty": "80 g",
+                  "meal": "Pranzo",
+                  "note": "1 SCATOLETTA SGOCCIOLATA",
+                  "days": ["LUN"]
+                },
+                { "food": "POMODORINI", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["LUN", "MER", "DOM"] },
+                { "food": "INSALATA", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["LUN"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "ORZO PERLATO", "qty": "70 g", "meal": "Pranzo", "note": "", "days": ["MAR"] },
+                { "food": "POMODORINI", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["MAR", "VEN"] },
+                { "food": "RUCOLA", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["MAR"] },
+                { "food": "CACIOCAVALLO", "qty": "40 g", "meal": "Pranzo", "note": "", "days": ["MAR"] },
+                { "food": "PASTA DI SEMOLA", "qty": "70 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                {
+                  "food": "CECI IN SCATOLA",
+                  "qty": "120 g",
+                  "meal": "Pranzo",
+                  "note": "BEN SGOCCIOLATI",
+                  "days": ["MER"]
+                },
+                { "food": "FINOCCHIO", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "PANE INTEGRALE", "qty": "60 g", "meal": "Pranzo", "note": "2 FETTE", "days": ["GIO"] },
+                { "food": "UOVA DI GALLINA", "qty": "110 g", "meal": "Pranzo", "note": "2 UOVA", "days": ["GIO"] },
+                { "food": "MELANZANE", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "COUS COUS", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                {
+                  "food": "SGOMBRO AL NATURALE CARREFOUR",
+                  "qty": "90 g",
+                  "meal": "Pranzo",
+                  "note": "1 SCATOLETTA SGOCCIOLATA",
+                  "days": ["VEN"]
+                },
+                { "food": "ZUCCHINE", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                { "food": "PATATE", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                {
+                  "food": "TONNO AL NATURALE RIOMARE",
+                  "qty": "60 g",
+                  "meal": "Pranzo",
+                  "note": "1 SCATOLETTA SGOCCIOLATA",
+                  "days": ["SAB"]
+                },
+                { "food": "UOVA DI GALLINA", "qty": "50 g", "meal": "Pranzo", "note": "1 UOVO SODO", "days": ["SAB"] },
+                { "food": "INSALATA", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                { "food": "CIPOLLE", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                {
+                  "food": "PANE DI GRANO DURO",
+                  "qty": "40 g",
+                  "meal": "Pranzo",
+                  "note": "1 PANE PICCOLO",
+                  "days": ["SAB"]
+                },
+                { "food": "pita", "qty": "60 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                { "food": "Feta light", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                { "food": "OLIVE VERDI", "qty": "30 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                {
+                  "food": "MANDORLE",
+                  "qty": "15 g",
+                  "meal": "Merenda",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["LUN"]
+                },
+                { "food": "MELA GOLDEN", "qty": "200 g", "meal": "Merenda", "note": "1 MELA MEDIA", "days": ["LUN"] },
+                {
+                  "food": "MANDARANCI e CLEMENTINE",
+                  "qty": "200 g",
+                  "meal": "Merenda",
+                  "note": "2 MANDARANCI",
+                  "days": ["MAR"]
+                },
+                {
+                  "food": "FRUTTA SECCA",
+                  "qty": "20 g",
+                  "meal": "Merenda",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["MER"]
+                },
+                { "food": "KIWI", "qty": "150 g", "meal": "Merenda", "note": "2 KIWI", "days": ["MER"] },
+                { "food": "BANANA", "qty": "120 g", "meal": "Merenda", "note": "1 BANANA", "days": ["GIO"] },
+                { "food": "MANDORLE", "qty": "15 g", "meal": "Merenda", "note": "", "days": ["GIO"] },
+                { "food": "PETTO DI TACCHINO", "qty": "60 g", "meal": "Merenda", "note": "", "days": ["VEN"] },
+                { "food": "PANE INTEGRALE", "qty": "40 g", "meal": "Merenda", "note": "1 FETTA", "days": ["VEN"] },
+                {
+                  "food": "FRUTTA FRESCA",
+                  "qty": "200 g",
+                  "meal": "Merenda",
+                  "note": "1 FRUTTO GRANDE",
+                  "days": ["SAB"]
+                },
+                {
+                  "food": "Budino proteico Ehrmann",
+                  "qty": "150 g",
+                  "meal": "Merenda",
+                  "note": "1 VASETTO",
+                  "days": ["DOM"]
+                },
+                { "food": "PETTO DI POLLO", "qty": "180 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                {
+                  "food": "PATATE",
+                  "qty": "180 g",
+                  "meal": "Cena",
+                  "note": "1 PATATA GRANDE E 1 MEDIA",
+                  "days": ["LUN"]
+                },
+                { "food": "PEPERONI DOLCI", "qty": "200 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN"]
+                },
+                {
+                  "food": "PANE DI GRANO DURO",
+                  "qty": "50 g",
+                  "meal": "Cena",
+                  "note": "1 PANE PICCOLO",
+                  "days": ["LUN", "GIO"]
+                },
+                { "food": "PESCE SPADA", "qty": "160 g", "meal": "Cena", "note": "2 FETTE", "days": ["MAR"] },
+                { "food": "POMODORINI", "qty": "200 g", "meal": "Cena", "note": "", "days": ["MAR"] },
+                {
+                  "food": "BROCCOLETTI O CIME DI RAPA",
+                  "qty": "250 g",
+                  "meal": "Cena",
+                  "note": "",
+                  "days": ["MAR", "VEN"]
+                },
+                {
+                  "food": "PANE DI GRANO DURO",
+                  "qty": "40 g",
+                  "meal": "Cena",
+                  "note": "1 PANE PICCOLO",
+                  "days": ["MAR", "MER"]
+                },
+                { "food": "STOCCAFISSO AMMOLLATO", "qty": "250 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "PATATE", "qty": "150 g", "meal": "Cena", "note": "1 PATATA MEDIA", "days": ["MER"] },
+                {
+                  "food": "POMODORI PELATI IN SCATOLA CON LIQUIDO",
+                  "qty": "200 g",
+                  "meal": "Cena",
+                  "note": "",
+                  "days": ["MER"]
+                },
+                { "food": "OLIVE VERDI", "qty": "15 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "PEPERONI DOLCI", "qty": "300 g", "meal": "Cena", "note": "2 PEPERONI", "days": ["GIO"] },
+                { "food": "RICOTTA DI VACCA", "qty": "120 g", "meal": "Cena", "note": "", "days": ["GIO"] },
+                { "food": "CACIOCAVALLO", "qty": "30 g", "meal": "Cena", "note": "", "days": ["GIO"] },
+                { "food": "UOVA DI GALLINA", "qty": "50 g", "meal": "Cena", "note": "1 UOVO", "days": ["GIO"] },
+                { "food": "PASTA DI SEMOLA INTEGRALE", "qty": "70 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                { "food": "Parmigiano Reggiano", "qty": "15 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                {
+                  "food": "PIZZA CON POMODORO E MOZZARELLA",
+                  "qty": "220 g",
+                  "meal": "Cena",
+                  "note": "1 PIZZA BASSA",
+                  "days": ["SAB"]
+                },
+                { "food": "RUCOLA", "qty": "100 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "5 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAINO",
+                  "days": ["SAB", "DOM"]
+                },
+                { "food": "PASTA DI SEMOLA", "qty": "70 g", "meal": "Cena", "note": "", "days": ["DOM"] },
+                { "food": "ragu", "qty": "100 g", "meal": "Cena", "note": "", "days": ["DOM"] },
+                { "food": "ZUCCHINE", "qty": "200 g", "meal": "Cena", "note": "", "days": ["DOM"] },
+                { "food": "Parmigiano Reggiano", "qty": "10 g", "meal": "Cena", "note": "", "days": ["DOM"] },
+                { "food": "PANE DI GRANO DURO", "qty": "40 g", "meal": "Cena", "note": "", "days": ["DOM"] }
+              ],
+              "check": "media 1692 kcal/die"
+            },
+            {
+              "label": "B",
+              "rows": [
+                {
+                  "food": "LATTE DI VACCA PARZIALMENTE SCREMATO UHT",
+                  "qty": "300 g",
+                  "meal": "Colazione",
+                  "note": "1 TAZZA",
+                  "days": ["LUN", "MAR", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "FETTE BISCOTTATE INTEGRALI",
+                  "qty": "50 g",
+                  "meal": "Colazione",
+                  "note": "5 FETTE",
+                  "days": ["LUN", "MAR", "GIO", "VEN", "SAB"]
+                },
+                {
+                  "food": "MARMELLATA (NORMALI E TIPO FRUTTA VIVA)",
+                  "qty": "10 g",
+                  "meal": "Colazione",
+                  "note": "1 VELO",
+                  "days": ["LUN", "MAR", "GIO", "VEN", "SAB"]
+                },
+                {
+                  "food": "Caffè",
+                  "qty": "45 g",
+                  "meal": "Colazione",
+                  "note": "1 TAZZINA",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 0%",
+                  "qty": "170 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO",
+                  "days": ["MER"]
+                },
+                {
+                  "food": "FETTE BISCOTTATE INTEGRALI",
+                  "qty": "40 g",
+                  "meal": "Colazione",
+                  "note": "4 FETTE",
+                  "days": ["MER"]
+                },
+                {
+                  "food": "LATTE DI VACCA PARZIALMENTE SCREMATO UHT",
+                  "qty": "250 g",
+                  "meal": "Colazione",
+                  "note": "1 TAZZA",
+                  "days": ["MER"]
+                },
+                { "food": "UOVA DI GALLINA", "qty": "110 g", "meal": "Colazione", "note": "2", "days": ["DOM"] },
+                { "food": "PANE INTEGRALE", "qty": "50 g", "meal": "Colazione", "note": "1 FETTA", "days": ["DOM"] },
+                {
+                  "food": "FRUTTA FRESCA",
+                  "qty": "200 g",
+                  "meal": "Spuntino",
+                  "note": "1 FRUTTO GRANDE O DUE PICCOLI",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "PANE TOSTATO", "qty": "130 g", "meal": "Pranzo", "note": "2 FRISSELLE", "days": ["LUN"] },
+                { "food": "POMODORI", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["LUN", "DOM"] },
+                {
+                  "food": "TONNO AL NATURALE RIOMARE",
+                  "qty": "100 g",
+                  "meal": "Pranzo",
+                  "note": "2 SCATOLETTE",
+                  "days": ["LUN"]
+                },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "15 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO E MEZZO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "RISO BRILLATO",
+                  "qty": "100 g",
+                  "meal": "Pranzo",
+                  "note": "INSALATA FREDDA",
+                  "days": ["MAR"]
+                },
+                { "food": "FESA DI TACCHINO", "qty": "100 g", "meal": "Pranzo", "note": "12 FETTE", "days": ["MAR"] },
+                { "food": "POMODORINI", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["MAR", "VEN"] },
+                { "food": "mais dolce prix", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["MAR"] },
+                { "food": "PANE INTEGRALE", "qty": "130 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "PETTO DI POLLO", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "POMODORI", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["MER", "GIO", "SAB"] },
+                { "food": "INSALATA", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "pita", "qty": "130 g", "meal": "Pranzo", "note": "1 PITTA", "days": ["GIO"] },
+                {
+                  "food": "LENTICCHIE IN SCATOLA",
+                  "qty": "230 g",
+                  "meal": "Pranzo",
+                  "note": "1 LATTA",
+                  "days": ["GIO"]
+                },
+                {
+                  "food": "PASTA DI SEMOLA INTEGRALE",
+                  "qty": "100 g",
+                  "meal": "Pranzo",
+                  "note": "FREDDA",
+                  "days": ["VEN"]
+                },
+                { "food": "ACCIUGHE O ALICI", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                { "food": "CECI IN SCATOLA", "qty": "200 g", "meal": "Pranzo", "note": "1 LATTA", "days": ["SAB"] },
+                {
+                  "food": "TONNO AL NATURALE RIOMARE",
+                  "qty": "80 g",
+                  "meal": "Pranzo",
+                  "note": "1 SCATOLETTA",
+                  "days": ["SAB"]
+                },
+                { "food": "PANE INTEGRALE", "qty": "70 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                { "food": "PANE INTEGRALE", "qty": "110 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                { "food": "CACIOCAVALLO", "qty": "50 g", "meal": "Pranzo", "note": "1 FETTA", "days": ["DOM"] },
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 0%",
+                  "qty": "150 g",
+                  "meal": "Merenda",
+                  "note": "1 VASETTO",
+                  "days": ["LUN", "GIO", "VEN", "DOM"]
+                },
+                {
+                  "food": "NOCI",
+                  "qty": "15 g",
+                  "meal": "Merenda",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["MAR", "SAB"]
+                },
+                {
+                  "food": "Philadelphia Active",
+                  "qty": "80 g",
+                  "meal": "Merenda",
+                  "note": "1 PORZIONE",
+                  "days": ["MER"]
+                },
+                { "food": "STOCCAFISSO AMMOLLATO", "qty": "220 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                { "food": "PATATE", "qty": "250 g", "meal": "Cena", "note": "2", "days": ["LUN", "DOM"] },
+                { "food": "PEPERONI DOLCI", "qty": "200 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                { "food": "CIPOLLE", "qty": "80 g", "meal": "Cena", "note": "CIPOLLA DI TROPEA", "days": ["LUN"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "15 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO E MEZZO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "PETTO DI POLLO", "qty": "200 g", "meal": "Cena", "note": "", "days": ["MAR"] },
+                { "food": "peperonata", "qty": "200 g", "meal": "Cena", "note": "", "days": ["MAR", "GIO"] },
+                { "food": "PANE INTEGRALE", "qty": "70 g", "meal": "Cena", "note": "", "days": ["MAR"] },
+                { "food": "INSALATA", "qty": "80 g", "meal": "Cena", "note": "", "days": ["MAR"] },
+                { "food": "PASTA DI SEMOLA INTEGRALE", "qty": "100 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "SOPRASSATA", "qty": "20 g", "meal": "Cena", "note": "'NDUJA, 1 CUCCHIAIO", "days": ["MER"] },
+                {
+                  "food": "VERDURE O ORTAGGI",
+                  "qty": "200 g",
+                  "meal": "Cena",
+                  "note": "A PIACERE",
+                  "days": ["MER", "SAB", "DOM"]
+                },
+                { "food": "PECORINO", "qty": "10 g", "meal": "Cena", "note": "1 CUCCHIAIO", "days": ["MER"] },
+                { "food": "PESCE SPADA", "qty": "200 g", "meal": "Cena", "note": "", "days": ["GIO"] },
+                { "food": "PANE INTEGRALE", "qty": "80 g", "meal": "Cena", "note": "", "days": ["GIO", "VEN"] },
+                { "food": "UOVA DI GALLINA", "qty": "165 g", "meal": "Cena", "note": "3", "days": ["VEN"] },
+                { "food": "MELANZANE", "qty": "250 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                { "food": "POMODORI", "qty": "100 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                {
+                  "food": "SALSICCIA FRESCA DI MAIALE",
+                  "qty": "100 g",
+                  "meal": "Cena",
+                  "note": "1 SALSICCIA",
+                  "days": ["SAB"]
+                },
+                { "food": "FAGIOLI IN SCATOLA", "qty": "250 g", "meal": "Cena", "note": "1 LATTA", "days": ["SAB"] },
+                { "food": "PANE INTEGRALE", "qty": "50 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                { "food": "CONIGLIO MAGRO", "qty": "200 g", "meal": "Cena", "note": "", "days": ["DOM"] },
+                { "food": "CIPOLLE", "qty": "50 g", "meal": "Cena", "note": "CIPOLLA DI TROPEA", "days": ["DOM"] }
+              ],
+              "check": "media 1891 kcal/die"
+            },
+            {
+              "label": "C",
+              "rows": [
+                {
+                  "food": "FETTE BISCOTTATE",
+                  "qty": "40 g",
+                  "meal": "Colazione",
+                  "note": "4 FETTE",
+                  "days": ["LUN", "VEN"]
+                },
+                {
+                  "food": "MARMELLATA A RIDOTTO TENORE DI ZUCCHERO",
+                  "qty": "20 g",
+                  "meal": "Colazione",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "VEN"]
+                },
+                {
+                  "food": "LATTE DI VACCA PARZIALMENTE SCREMATO UHT",
+                  "qty": "250 g",
+                  "meal": "Colazione",
+                  "note": "1 TAZZA",
+                  "days": ["LUN", "MER", "VEN", "DOM"]
+                },
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 5%",
+                  "qty": "150 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO",
+                  "days": ["MAR", "GIO", "SAB"]
+                },
+                { "food": "FIOCCHI DI AVENA", "qty": "30 g", "meal": "Colazione", "note": "", "days": ["MAR", "SAB"] },
+                { "food": "FRAGOLE", "qty": "100 g", "meal": "Colazione", "note": "", "days": ["MAR"] },
+                {
+                  "food": "FETTE BISCOTTATE",
+                  "qty": "30 g",
+                  "meal": "Colazione",
+                  "note": "3 FETTE",
+                  "days": ["MER", "GIO", "DOM"]
+                },
+                {
+                  "food": "MARMELLATA A RIDOTTO TENORE DI ZUCCHERO",
+                  "qty": "15 g",
+                  "meal": "Colazione",
+                  "note": "1 VELO",
+                  "days": ["MER", "DOM"]
+                },
+                { "food": "FRUTTA FRESCA", "qty": "100 g", "meal": "Colazione", "note": "1 FRUTTO", "days": ["GIO"] },
+                { "food": "LAMPONI", "qty": "100 g", "meal": "Colazione", "note": "", "days": ["SAB"] },
+                { "food": "FRUTTA FRESCA", "qty": "150 g", "meal": "Spuntino", "note": "1 FRUTTO", "days": ["LUN"] },
+                { "food": "BANANA", "qty": "120 g", "meal": "Spuntino", "note": "1 BANANA MEDIA", "days": ["MAR"] },
+                { "food": "KIWI", "qty": "150 g", "meal": "Spuntino", "note": "2 KIWI", "days": ["MER"] },
+                { "food": "MELA GOLDEN", "qty": "180 g", "meal": "Spuntino", "note": "1 MELA", "days": ["GIO"] },
+                { "food": "BANANA", "qty": "100 g", "meal": "Spuntino", "note": "1 BANANA PICCOLA", "days": ["VEN"] },
+                { "food": "MELA", "qty": "180 g", "meal": "Spuntino", "note": "1 MELA", "days": ["SAB"] },
+                { "food": "PESCA", "qty": "200 g", "meal": "Spuntino", "note": "1 PESCA", "days": ["DOM"] },
+                {
+                  "food": "PASTA DI SEMOLA INTEGRALE",
+                  "qty": "80 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["LUN", "SAB"]
+                },
+                {
+                  "food": "POMODORI PELATI IN SCATOLA CON LIQUIDO",
+                  "qty": "150 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["LUN", "GIO"]
+                },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MER", "GIO", "VEN", "SAB"]
+                },
+                {
+                  "food": "PANE DI GRANO DURO",
+                  "qty": "100 g",
+                  "meal": "Pranzo",
+                  "note": "2 FETTE",
+                  "days": ["MAR", "DOM"]
+                },
+                { "food": "PETTO DI TACCHINO", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["MAR"] },
+                {
+                  "food": "POMODORI",
+                  "qty": "150 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["MAR", "MER", "VEN", "SAB", "DOM"]
+                },
+                { "food": "RISO BASMATI", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                {
+                  "food": "TONNO AL NATURALE",
+                  "qty": "120 g",
+                  "meal": "Pranzo",
+                  "note": "2 SCATOLETTE",
+                  "days": ["MER"]
+                },
+                { "food": "PASTA DI SEMOLA", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "PISELLI", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "RISO INTEGRALE", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                { "food": "CECI IN SCATOLA", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                {
+                  "food": "TONNO AL NATURALE RIOMARE",
+                  "qty": "120 g",
+                  "meal": "Pranzo",
+                  "note": "2 SCATOLETTE",
+                  "days": ["SAB"]
+                },
+                { "food": "UOVA DI GALLINA", "qty": "110 g", "meal": "Pranzo", "note": "2 UOVA", "days": ["DOM"] },
+                { "food": "MELA GOLDEN", "qty": "180 g", "meal": "Merenda", "note": "1 MELA", "days": ["LUN"] },
+                {
+                  "food": "YOGURT DI LATTE SCREMATO",
+                  "qty": "125 g",
+                  "meal": "Merenda",
+                  "note": "1 VASETTO",
+                  "days": ["MAR", "GIO", "DOM"]
+                },
+                { "food": "FRAGOLE", "qty": "150 g", "meal": "Merenda", "note": "1 FRUTTO", "days": ["MER", "SAB"] },
+                { "food": "KIWI", "qty": "150 g", "meal": "Merenda", "note": "2 KIWI", "days": ["VEN"] },
+                { "food": "PETTO DI POLLO", "qty": "180 g", "meal": "Cena", "note": "", "days": ["LUN", "VEN"] },
+                {
+                  "food": "VERDURE O ORTAGGI",
+                  "qty": "250 g",
+                  "meal": "Cena",
+                  "note": "A PIACERE",
+                  "days": ["LUN", "MAR", "VEN", "SAB"]
+                },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "LENTICCHIE IN SCATOLA", "qty": "180 g", "meal": "Cena", "note": "", "days": ["MAR"] },
+                { "food": "PASTA DI SEMOLA INTEGRALE", "qty": "60 g", "meal": "Cena", "note": "", "days": ["MAR"] },
+                {
+                  "food": "FILETTI DI MERLUZZO SURGELATO",
+                  "qty": "200 g",
+                  "meal": "Cena",
+                  "note": "",
+                  "days": ["MER"]
+                },
+                {
+                  "food": "POMODORI PELATI IN SCATOLA CON LIQUIDO",
+                  "qty": "150 g",
+                  "meal": "Cena",
+                  "note": "",
+                  "days": ["MER"]
+                },
+                { "food": "SGOMBRO O MACCARELLO", "qty": "180 g", "meal": "Cena", "note": "", "days": ["GIO"] },
+                { "food": "PATATE", "qty": "200 g", "meal": "Cena", "note": "2 PATATE", "days": ["GIO"] },
+                {
+                  "food": "VERDURE O ORTAGGI",
+                  "qty": "200 g",
+                  "meal": "Cena",
+                  "note": "A PIACERE",
+                  "days": ["GIO", "DOM"]
+                },
+                { "food": "FILETTI DI ORATA SELVATICA", "qty": "200 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                { "food": "BRESAOLA", "qty": "80 g", "meal": "Cena", "note": "", "days": ["DOM"] },
+                { "food": "PANE INTEGRALE", "qty": "80 g", "meal": "Cena", "note": "2 FETTE", "days": ["DOM"] }
+              ],
+              "check": "media 1354 kcal/die"
+            },
+            {
+              "label": "D",
+              "rows": [
+                {
+                  "food": "LATTE DI VACCA PARZIALMENTE SCREMATO UHT",
+                  "qty": "250 g",
+                  "meal": "Colazione",
+                  "note": "1 TAZZA",
+                  "days": ["LUN", "MER", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "FETTE BISCOTTATE",
+                  "qty": "40 g",
+                  "meal": "Colazione",
+                  "note": "4 FETTE",
+                  "days": ["LUN", "MER", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "MARMELLATA A RIDOTTO TENORE DI ZUCCHERO",
+                  "qty": "20 g",
+                  "meal": "Colazione",
+                  "note": "1 VELO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "CAFFÈ DELLA MOKA",
+                  "qty": "45 g",
+                  "meal": "Colazione",
+                  "note": "1 TAZZA",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 0%",
+                  "qty": "200 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO E MEZZO",
+                  "days": ["MAR", "GIO"]
+                },
+                {
+                  "food": "FETTE BISCOTTATE",
+                  "qty": "30 g",
+                  "meal": "Colazione",
+                  "note": "3 FETTE",
+                  "days": ["MAR", "GIO"]
+                },
+                {
+                  "food": "FRUTTA FRESCA",
+                  "qty": "150 g",
+                  "meal": "Spuntino",
+                  "note": "1 FRUTTO GRANDE O DUE PICCOLI",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "PASTA DI SEMOLA",
+                  "qty": "100 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["LUN", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "SALSICCIA SECCA DI MAIALE",
+                  "qty": "30 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO COLMO",
+                  "days": ["LUN"]
+                },
+                {
+                  "food": "POMODORINI",
+                  "qty": "150 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["LUN", "MER", "VEN", "SAB"]
+                },
+                {
+                  "food": "PARMIGIANO",
+                  "qty": "10 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MER", "SAB", "DOM"]
+                },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB"]
+                },
+                { "food": "RISO BASMATI", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["MAR"] },
+                {
+                  "food": "TONNO AL NATURALE RIOMARE",
+                  "qty": "120 g",
+                  "meal": "Pranzo",
+                  "note": "2 SCATOLETTE",
+                  "days": ["MAR"]
+                },
+                { "food": "CIPOLLINE", "qty": "100 g", "meal": "Pranzo", "note": "CIPOLLA DI TROPEA", "days": ["MAR"] },
+                { "food": "PASTA DI SEMOLA INTEGRALE", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "LENTICCHIE SECCHE", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "RISO PARBOILED", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "PETTO DI POLLO", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "peperonata", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "SGOMBRO O MACCARELLO", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                { "food": "CECI SECCHI", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                { "food": "ragu", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                { "food": "INSALATA", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 0%",
+                  "qty": "150 g",
+                  "meal": "Merenda",
+                  "note": "1 VASETTO",
+                  "days": ["LUN", "MER", "VEN"]
+                },
+                { "food": "ARANCE", "qty": "200 g", "meal": "Merenda", "note": "1 ARANCIA", "days": ["MAR"] },
+                { "food": "KIWI", "qty": "150 g", "meal": "Merenda", "note": "2 KIWI", "days": ["GIO"] },
+                {
+                  "food": "MANDORLE",
+                  "qty": "30 g",
+                  "meal": "Merenda",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["SAB"]
+                },
+                {
+                  "food": "FRUTTA FRESCA",
+                  "qty": "150 g",
+                  "meal": "Merenda",
+                  "note": "1 FRUTTO GRANDE O DUE PICCOLI",
+                  "days": ["DOM"]
+                },
+                { "food": "FAVE FRESCHE", "qty": "250 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                { "food": "CICORIA", "qty": "300 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                { "food": "UOVA DI GALLINA", "qty": "110 g", "meal": "Cena", "note": "2", "days": ["LUN", "MAR"] },
+                {
+                  "food": "PANE INTEGRALE",
+                  "qty": "80 g",
+                  "meal": "Cena",
+                  "note": "2 FETTE",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB"]
+                },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "CIPOLLINE", "qty": "150 g", "meal": "Cena", "note": "CIPOLLA DI TROPEA", "days": ["MAR"] },
+                { "food": "INSALATA", "qty": "100 g", "meal": "Cena", "note": "", "days": ["MAR", "MER", "DOM"] },
+                {
+                  "food": "hamburger di pollo e tacchino fileni",
+                  "qty": "150 g",
+                  "meal": "Cena",
+                  "note": "1 HAMBURGER GRANDE",
+                  "days": ["MER"]
+                },
+                { "food": "BACCALÀ AMMOLLATO", "qty": "200 g", "meal": "Cena", "note": "", "days": ["GIO"] },
+                { "food": "PEPERONI DOLCI", "qty": "200 g", "meal": "Cena", "note": "", "days": ["GIO"] },
+                { "food": "PROVOLA AFFUMICATA", "qty": "100 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                { "food": "MELANZANE", "qty": "200 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                { "food": "PESCE SPADA", "qty": "200 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                { "food": "POMODORINI", "qty": "200 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                { "food": "OLIVE NERE", "qty": "30 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                { "food": "PETTO DI POLLO", "qty": "200 g", "meal": "Cena", "note": "", "days": ["DOM"] },
+                { "food": "PATATE", "qty": "200 g", "meal": "Cena", "note": "2", "days": ["DOM"] }
+              ],
+              "check": "media 1724 kcal/die"
+            }
+          ]
+        },
+        {
+          "id": "b2",
+          "title": "Ragazza 16 anni, 1400 kcal",
+          "text": "dieta per paziente 16 anni forte obesa in terapia con semaglutide merenda budino e panino a spuntino mattina colazione yogurt 1400 calorie proteine alte non mangia pesce azzurrp\nnome XXX YYY",
+          "answers": ["Nessuna allergia né altre patologie. Proteine minimo 100 g al giorno."],
+          "plans": [
+            {
+              "label": "A",
+              "rows": [
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 0%",
+                  "qty": "150 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "FETTE BISCOTTATE",
+                  "qty": "20 g",
+                  "meal": "Colazione",
+                  "note": "2 FETTE",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "FRUTTA FRESCA",
+                  "qty": "100 g",
+                  "meal": "Colazione",
+                  "note": "1 FRUTTO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "Caffè",
+                  "qty": "45 g",
+                  "meal": "Colazione",
+                  "note": "1 TAZZINA",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "PANE INTEGRALE",
+                  "qty": "50 g",
+                  "meal": "Spuntino",
+                  "note": "1 PANINO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "BRESAOLA",
+                  "qty": "50 g",
+                  "meal": "Spuntino",
+                  "note": "6 FETTE",
+                  "days": ["LUN", "GIO", "DOM"]
+                },
+                {
+                  "food": "PROSCIUTTO COTTO",
+                  "qty": "40 g",
+                  "meal": "Spuntino",
+                  "note": "2 FETTE",
+                  "days": ["MAR", "VEN"]
+                },
+                {
+                  "food": "FESA DI TACCHINO",
+                  "qty": "50 g",
+                  "meal": "Spuntino",
+                  "note": "6 FETTE",
+                  "days": ["MER", "SAB"]
+                },
+                {
+                  "food": "PASTA DI SEMOLA INTEGRALE",
+                  "qty": "60 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["LUN", "SAB"]
+                },
+                { "food": "PETTO DI POLLO", "qty": "120 g", "meal": "Pranzo", "note": "", "days": ["LUN", "GIO"] },
+                {
+                  "food": "VERDURE O ORTAGGI",
+                  "qty": "200 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "RISO INTEGRALE", "qty": "60 g", "meal": "Pranzo", "note": "", "days": ["MAR"] },
+                { "food": "UOVA DI GALLINA", "qty": "110 g", "meal": "Pranzo", "note": "2", "days": ["MAR"] },
+                {
+                  "food": "PASTA DI SEMOLA INTEGRALE",
+                  "qty": "50 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["MER", "VEN", "DOM"]
+                },
+                {
+                  "food": "LENTICCHIE IN SCATOLA",
+                  "qty": "200 g",
+                  "meal": "Pranzo",
+                  "note": "1 LATTA",
+                  "days": ["MER"]
+                },
+                { "food": "COUS COUS", "qty": "60 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "FAGIOLI IN SCATOLA", "qty": "200 g", "meal": "Pranzo", "note": "1 LATTA", "days": ["VEN"] },
+                { "food": "FILETTO DI VITELLO", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                { "food": "CECI IN SCATOLA", "qty": "200 g", "meal": "Pranzo", "note": "1 LATTA", "days": ["DOM"] },
+                {
+                  "food": "Budino proteico Ehrmann",
+                  "qty": "200 g",
+                  "meal": "Merenda",
+                  "note": "1 VASETTO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "MERLUZZO", "qty": "150 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                {
+                  "food": "VERDURE O ORTAGGI",
+                  "qty": "200 g",
+                  "meal": "Cena",
+                  "note": "",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "PANE INTEGRALE",
+                  "qty": "30 g",
+                  "meal": "Cena",
+                  "note": "",
+                  "days": ["LUN", "MAR", "GIO", "VEN", "SAB"]
+                },
+                { "food": "PETTO DI TACCHINO", "qty": "150 g", "meal": "Cena", "note": "", "days": ["MAR"] },
+                { "food": "ORATA SURGELATA", "qty": "150 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "PATATE", "qty": "150 g", "meal": "Cena", "note": "2", "days": ["MER"] },
+                {
+                  "food": "hamburger di pollo e tacchino fileni",
+                  "qty": "120 g",
+                  "meal": "Cena",
+                  "note": "1 HAMBURGER",
+                  "days": ["GIO"]
+                },
+                { "food": "SPIGOLA O BRANZINO", "qty": "150 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                { "food": "PETTO DI POLLO", "qty": "150 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                { "food": "UOVA DI GALLINA", "qty": "110 g", "meal": "Cena", "note": "2", "days": ["DOM"] },
+                { "food": "RICOTTA PROTEICA SANTALUCIA", "qty": "100 g", "meal": "Cena", "note": "", "days": ["DOM"] }
+              ],
+              "check": "kcal ok"
+            },
+            {
+              "label": "B",
+              "rows": [
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 0%",
+                  "qty": "150 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "FIOCCHI DI AVENA",
+                  "qty": "30 g",
+                  "meal": "Colazione",
+                  "note": "",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "FRUTTA FRESCA",
+                  "qty": "100 g",
+                  "meal": "Colazione",
+                  "note": "1 FRUTTO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "PANE INTEGRALE",
+                  "qty": "50 g",
+                  "meal": "Spuntino",
+                  "note": "1 PANINO PICCOLO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "BRESAOLA",
+                  "qty": "50 g",
+                  "meal": "Spuntino",
+                  "note": "",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "PASTA DI SEMOLA INTEGRALE", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["LUN"] },
+                { "food": "PETTO DI POLLO", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["LUN"] },
+                { "food": "VERDURE O ORTAGGI", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["LUN", "MAR"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "RISO INTEGRALE", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["MAR"] },
+                { "food": "FAGIOLI IN SCATOLA", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["MAR"] },
+                { "food": "PASTA DI SEMOLA", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "UOVA DI GALLINA", "qty": "55 g", "meal": "Pranzo", "note": "1 UOVO", "days": ["MER"] },
+                { "food": "ALBUME D'UOVO DI GALLINA", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "POMODORI DA INSALATA", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "COUS COUS", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "HAMBURGER DI BOVINO", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "POMODORI", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "PASTA DI SEMOLA INTEGRALE", "qty": "70 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                {
+                  "food": "TONNO AL NATURALE",
+                  "qty": "120 g",
+                  "meal": "Pranzo",
+                  "note": "2 SCATOLETTE",
+                  "days": ["VEN"]
+                },
+                { "food": "RUCOLA", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                { "food": "RISO BASMATI", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                { "food": "SEITAN AL NATURALE", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                {
+                  "food": "POMODORI PELATI IN SCATOLA CON LIQUIDO",
+                  "qty": "150 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["SAB"]
+                },
+                { "food": "PASTA DI SEMOLA INTEGRALE", "qty": "40 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                { "food": "BISTECCA DI MAIALE", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                { "food": "MELANZANE", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                {
+                  "food": "Budino proteico Ehrmann",
+                  "qty": "200 g",
+                  "meal": "Merenda",
+                  "note": "1 VASETTO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "MERLUZZO", "qty": "180 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                { "food": "PATATE", "qty": "100 g", "meal": "Cena", "note": "1 PATATA", "days": ["LUN", "DOM"] },
+                { "food": "RUCOLA", "qty": "80 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "PETTO DI TACCHINO", "qty": "120 g", "meal": "Cena", "note": "", "days": ["MAR"] },
+                {
+                  "food": "PANE INTEGRALE",
+                  "qty": "30 g",
+                  "meal": "Cena",
+                  "note": "1 PICCOLA FETTA",
+                  "days": ["MAR", "MER", "SAB"]
+                },
+                { "food": "ZUCCHINE", "qty": "200 g", "meal": "Cena", "note": "", "days": ["MAR", "VEN"] },
+                { "food": "FILETTI DI ORATA SELVATICA", "qty": "120 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "MELANZANE", "qty": "200 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "CONIGLIO MAGRO", "qty": "120 g", "meal": "Cena", "note": "", "days": ["GIO"] },
+                {
+                  "food": "PATATE DOLCI AMERICANE",
+                  "qty": "100 g",
+                  "meal": "Cena",
+                  "note": "1 PATATA MEDIA",
+                  "days": ["GIO"]
+                },
+                { "food": "SPINACI", "qty": "100 g", "meal": "Cena", "note": "", "days": ["GIO"] },
+                { "food": "PETTO DI POLLO", "qty": "170 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                { "food": "PANE INTEGRALE", "qty": "50 g", "meal": "Cena", "note": "1 FETTA GRANDE", "days": ["VEN"] },
+                { "food": "MERLUZZO SURGELATO", "qty": "120 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                { "food": "SCAROLA", "qty": "200 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                {
+                  "food": "FILETTI DI ORATA D'ALLEVAMENTO",
+                  "qty": "120 g",
+                  "meal": "Cena",
+                  "note": "",
+                  "days": ["DOM"]
+                },
+                { "food": "POMODORI DA INSALATA", "qty": "100 g", "meal": "Cena", "note": "", "days": ["DOM"] }
+              ],
+              "check": "kcal ok · prot ok"
+            },
+            {
+              "label": "C",
+              "rows": [
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 0%",
+                  "qty": "150 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "FETTE BISCOTTATE INTEGRALI",
+                  "qty": "20 g",
+                  "meal": "Colazione",
+                  "note": "2 FETTE",
+                  "days": ["LUN", "MAR", "GIO", "SAB"]
+                },
+                {
+                  "food": "FRUTTI DI BOSCO",
+                  "qty": "100 g",
+                  "meal": "Colazione",
+                  "note": "1 CUPPETTINO",
+                  "days": ["LUN", "MAR"]
+                },
+                {
+                  "food": "Caffè",
+                  "qty": "45 g",
+                  "meal": "Colazione",
+                  "note": "1 TAZZINA",
+                  "days": ["LUN", "MAR", "GIO", "SAB"]
+                },
+                {
+                  "food": "PANE INTEGRALE",
+                  "qty": "40 g",
+                  "meal": "Colazione",
+                  "note": "1 FETTA MEDIA",
+                  "days": ["MER"]
+                },
+                {
+                  "food": "MARMELLATA A RIDOTTO TENORE DI ZUCCHERO",
+                  "qty": "15 g",
+                  "meal": "Colazione",
+                  "note": "1 VELO",
+                  "days": ["MER"]
+                },
+                { "food": "THÈ", "qty": "200 g", "meal": "Colazione", "note": "1 TAZZA", "days": ["MER"] },
+                { "food": "FRAGOLE", "qty": "120 g", "meal": "Colazione", "note": "1 CUPPETTINO", "days": ["GIO"] },
+                {
+                  "food": "FIOCCHI DI AVENA",
+                  "qty": "20 g",
+                  "meal": "Colazione",
+                  "note": "2 CUCCHIAI",
+                  "days": ["VEN", "DOM"]
+                },
+                { "food": "KIWI", "qty": "150 g", "meal": "Colazione", "note": "2 KIWI", "days": ["VEN"] },
+                { "food": "FRUTTI DI BOSCO", "qty": "100 g", "meal": "Colazione", "note": "", "days": ["SAB"] },
+                { "food": "MELA", "qty": "150 g", "meal": "Colazione", "note": "1 FRUTTO MEDIO", "days": ["DOM"] },
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 0%",
+                  "qty": "150 g",
+                  "meal": "Spuntino",
+                  "note": "1 VASETTO",
+                  "days": ["LUN", "MAR", "MER", "SAB"]
+                },
+                {
+                  "food": "MELA",
+                  "qty": "150 g",
+                  "meal": "Spuntino",
+                  "note": "1 FRUTTO MEDIO",
+                  "days": ["LUN", "DOM"]
+                },
+                { "food": "PERA", "qty": "150 g", "meal": "Spuntino", "note": "1 PERA MEDIA", "days": ["MAR"] },
+                { "food": "ARANCE", "qty": "200 g", "meal": "Spuntino", "note": "1 ARANCIA GRANDE", "days": ["MER"] },
+                {
+                  "food": "YOGURT DI LATTE SCREMATO",
+                  "qty": "125 g",
+                  "meal": "Spuntino",
+                  "note": "1 VASETTO",
+                  "days": ["GIO", "DOM"]
+                },
+                { "food": "KIWI", "qty": "150 g", "meal": "Spuntino", "note": "2 KIWI", "days": ["GIO"] },
+                {
+                  "food": "SKYR BIANCO SENZA GRASSI",
+                  "qty": "175 g",
+                  "meal": "Spuntino",
+                  "note": "1 VASETTETTO",
+                  "days": ["VEN"]
+                },
+                { "food": "FRAGOLE", "qty": "150 g", "meal": "Spuntino", "note": "UNA VASCHETTA", "days": ["VEN"] },
+                {
+                  "food": "FRUTTI DI BOSCO",
+                  "qty": "150 g",
+                  "meal": "Spuntino",
+                  "note": "1 CUPPETTINO",
+                  "days": ["SAB"]
+                },
+                { "food": "PASTA DI SEMOLA INTEGRALE", "qty": "60 g", "meal": "Pranzo", "note": "", "days": ["LUN"] },
+                {
+                  "food": "PETTO DI POLLO",
+                  "qty": "110 g",
+                  "meal": "Pranzo",
+                  "note": "1 FETTINA GRANDE",
+                  "days": ["LUN", "GIO"]
+                },
+                {
+                  "food": "VERDURE O ORTAGGI",
+                  "qty": "200 g",
+                  "meal": "Pranzo",
+                  "note": "QUELLA CHE VUOI",
+                  "days": ["LUN", "MAR", "VEN", "SAB"]
+                },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "8 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "DOM"]
+                },
+                { "food": "RISO INTEGRALE", "qty": "45 g", "meal": "Pranzo", "note": "", "days": ["MAR"] },
+                {
+                  "food": "LENTICCHIE IN SCATOLA",
+                  "qty": "150 g",
+                  "meal": "Pranzo",
+                  "note": "1 VETRO PICCOLO",
+                  "days": ["MAR"]
+                },
+                { "food": "PASTA DI SEMOLA", "qty": "60 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "PETTO DI TACCHINO", "qty": "110 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "POMODORINI", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "FARRO", "qty": "70 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "ZUCCHINE", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["GIO", "DOM"] },
+                { "food": "COUS COUS", "qty": "60 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                { "food": "CECI IN SCATOLA", "qty": "120 g", "meal": "Pranzo", "note": "SGOCIOLATO", "days": ["VEN"] },
+                { "food": "PASTA DI SEMOLA", "qty": "45 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                { "food": "ragu", "qty": "60 g", "meal": "Pranzo", "note": "3 CUCCHIAI", "days": ["SAB"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "6 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["SAB"]
+                },
+                { "food": "RISO BASMATI", "qty": "60 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                {
+                  "food": "GAMBERETTI SURGELATI",
+                  "qty": "160 g",
+                  "meal": "Pranzo",
+                  "note": "MEZZA VASCHETTA",
+                  "days": ["DOM"]
+                },
+                {
+                  "food": "Budino proteico Ehrmann",
+                  "qty": "130 g",
+                  "meal": "Merenda",
+                  "note": "1 VASETTO",
+                  "days": ["LUN", "MAR", "GIO", "VEN", "DOM"]
+                },
+                {
+                  "food": "PANE INTEGRALE",
+                  "qty": "40 g",
+                  "meal": "Merenda",
+                  "note": "½ PANINO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "Dessert proteico Milbona - Blueberry",
+                  "qty": "200 g",
+                  "meal": "Merenda",
+                  "note": "1 VASETTO",
+                  "days": ["MER"]
+                },
+                {
+                  "food": "Dessert proteico Milbona - Gusto cioccolato",
+                  "qty": "200 g",
+                  "meal": "Merenda",
+                  "note": "1 VASETTO",
+                  "days": ["SAB"]
+                },
+                {
+                  "food": "MERLUZZO SURGELATO",
+                  "qty": "180 g",
+                  "meal": "Cena",
+                  "note": "1 FILETO GRANDE",
+                  "days": ["LUN"]
+                },
+                { "food": "PATATE", "qty": "150 g", "meal": "Cena", "note": "2 MEDIE", "days": ["LUN"] },
+                { "food": "ZUCCHINE", "qty": "150 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "8 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN"]
+                },
+                { "food": "UOVA DI GALLINA", "qty": "110 g", "meal": "Cena", "note": "2", "days": ["MAR"] },
+                { "food": "SPINACI", "qty": "200 g", "meal": "Cena", "note": "", "days": ["MAR"] },
+                {
+                  "food": "ALBUME D'UOVO DI GALLINA",
+                  "qty": "150 g",
+                  "meal": "Cena",
+                  "note": "4 ALBUMI",
+                  "days": ["MAR", "VEN"]
+                },
+                { "food": "ORATA SURGELATA", "qty": "170 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "PATATE", "qty": "120 g", "meal": "Cena", "note": "1 GROSSA", "days": ["MER"] },
+                { "food": "INSALATA", "qty": "100 g", "meal": "Cena", "note": "A PIACERE", "days": ["MER", "SAB"] },
+                { "food": "FILETTO DI PLATESSA", "qty": "180 g", "meal": "Cena", "note": "2 FILETTI", "days": ["GIO"] },
+                { "food": "PANE INTEGRALE", "qty": "50 g", "meal": "Cena", "note": "1 FETTA MEDIA", "days": ["GIO"] },
+                {
+                  "food": "VERDURE O ORTAGGI",
+                  "qty": "200 g",
+                  "meal": "Cena",
+                  "note": "QUELLA CHE VUOI",
+                  "days": ["GIO"]
+                },
+                { "food": "UOVO SODO DI GALLINA", "qty": "110 g", "meal": "Cena", "note": "2", "days": ["VEN"] },
+                { "food": "SPINACI", "qty": "150 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                { "food": "HAMBURGER DI BOVINO", "qty": "150 g", "meal": "Cena", "note": "1", "days": ["SAB"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "6 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["SAB", "DOM"]
+                },
+                { "food": "BRESAOLA", "qty": "100 g", "meal": "Cena", "note": "12 FETTE MEDIE", "days": ["DOM"] },
+                { "food": "RUCOLA", "qty": "80 g", "meal": "Cena", "note": "", "days": ["DOM"] },
+                {
+                  "food": "PANE DI GRANO DURO",
+                  "qty": "40 g",
+                  "meal": "Cena",
+                  "note": "½ PANINO PICCOLO",
+                  "days": ["DOM"]
+                },
+                { "food": "Parmigiano Reggiano", "qty": "10 g", "meal": "Cena", "note": "1 CUCCHIAIO", "days": ["DOM"] }
+              ],
+              "check": "kcal ok · prot ok"
+            },
+            {
+              "label": "D",
+              "rows": [
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 0%",
+                  "qty": "150 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "FETTE BISCOTTATE",
+                  "qty": "30 g",
+                  "meal": "Colazione",
+                  "note": "2 FETTE",
+                  "days": ["LUN", "MER", "VEN", "DOM"]
+                },
+                {
+                  "food": "MARMELLATA A RIDOTTO TENORE DI ZUCCHERO",
+                  "qty": "20 g",
+                  "meal": "Colazione",
+                  "note": "1 VELO",
+                  "days": ["LUN", "GIO"]
+                },
+                {
+                  "food": "Caffè",
+                  "qty": "45 g",
+                  "meal": "Colazione",
+                  "note": "",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "FETTE BISCOTTATE INTEGRALI",
+                  "qty": "30 g",
+                  "meal": "Colazione",
+                  "note": "2 FETTE",
+                  "days": ["MAR", "GIO", "SAB"]
+                },
+                {
+                  "food": "FRUTTA FRESCA",
+                  "qty": "100 g",
+                  "meal": "Colazione",
+                  "note": "1 FRUTTO",
+                  "days": ["MAR", "MER", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "Skyr Milbona",
+                  "qty": "150 g",
+                  "meal": "Spuntino",
+                  "note": "1 VASETTO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "PASTA DI SEMOLA INTEGRALE", "qty": "70 g", "meal": "Pranzo", "note": "", "days": ["LUN"] },
+                { "food": "PETTO DI POLLO", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["LUN"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB"]
+                },
+                {
+                  "food": "VERDURE O ORTAGGI",
+                  "qty": "200 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["LUN", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "RISO BASMATI", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["MAR"] },
+                { "food": "UOVA DI GALLINA", "qty": "110 g", "meal": "Pranzo", "note": "2", "days": ["MAR"] },
+                { "food": "ZUCCHINE", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["MAR"] },
+                { "food": "COUS COUS", "qty": "60 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "PETTO DI TACCHINO", "qty": "120 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "POMODORINI", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "PASTA DI SEMOLA INTEGRALE", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                {
+                  "food": "CECI IN SCATOLA",
+                  "qty": "150 g",
+                  "meal": "Pranzo",
+                  "note": "SGOCCIOLATI",
+                  "days": ["GIO", "SAB"]
+                },
+                { "food": "PARMIGIANO", "qty": "20 g", "meal": "Pranzo", "note": "1 CUBETTO", "days": ["GIO"] },
+                { "food": "RISO INTEGRALE", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                { "food": "BISTECCA DI MANZO", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                { "food": "FARRO", "qty": "60 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                { "food": "PASTA DI SEMOLA INTEGRALE", "qty": "60 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                { "food": "ragu", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                {
+                  "food": "Budino proteico Ehrmann",
+                  "qty": "200 g",
+                  "meal": "Merenda",
+                  "note": "1 VASETTO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "PANE INTEGRALE",
+                  "qty": "50 g",
+                  "meal": "Merenda",
+                  "note": "1 PANINO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "MERLUZZO", "qty": "200 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB"]
+                },
+                {
+                  "food": "VERDURE O ORTAGGI",
+                  "qty": "200 g",
+                  "meal": "Cena",
+                  "note": "",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB"]
+                },
+                { "food": "SALMONE", "qty": "100 g", "meal": "Cena", "note": "", "days": ["MAR"] },
+                { "food": "FILETTO DI PLATESSA", "qty": "200 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "PETTO DI TACCHINO", "qty": "150 g", "meal": "Cena", "note": "1 PETTO", "days": ["GIO"] },
+                { "food": "CALAMARO", "qty": "250 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                { "food": "PETTO DI POLLO", "qty": "150 g", "meal": "Cena", "note": "1 PETTO", "days": ["SAB"] },
+                { "food": "BRESAOLA", "qty": "50 g", "meal": "Cena", "note": "6 FETTE", "days": ["DOM"] },
+                { "food": "MOZZARELLA LIGHT MILBONA", "qty": "100 g", "meal": "Cena", "note": "", "days": ["DOM"] },
+                { "food": "POMODORINI", "qty": "200 g", "meal": "Cena", "note": "", "days": ["DOM"] }
+              ],
+              "check": "kcal ok · prot ok"
+            }
+          ]
+        },
+        {
+          "id": "b3",
+          "title": "Chetogenica, stitica",
+          "text": "Dieta chetogenica per paziente stitica come pesce non mettere cose da cucinare. Colazioni dolci",
+          "answers": ["1500 kcal al giorno, carboidrati massimo 30 g."],
+          "plans": [
+            {
+              "label": "A",
+              "rows": [
+                {
+                  "food": "Brioche (cornetti) Keto",
+                  "qty": "50 g",
+                  "meal": "Colazione",
+                  "note": "1 BRIOCHE",
+                  "days": ["LUN", "GIO"]
+                },
+                {
+                  "food": "Keto-crema nocciola",
+                  "qty": "15 g",
+                  "meal": "Colazione",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "GIO"]
+                },
+                {
+                  "food": "BEVANDA A BASE DI MANDORLA ADEZ",
+                  "qty": "200 g",
+                  "meal": "Colazione",
+                  "note": "1 BICCHIERE",
+                  "days": ["LUN", "GIO"]
+                },
+                {
+                  "food": "CAFFÈ DELLA MOKA",
+                  "qty": "50 g",
+                  "meal": "Colazione",
+                  "note": "1 TAZZINA",
+                  "days": ["LUN", "GIO"]
+                },
+                {
+                  "food": "Yogurt FAGE BeFree Naturale",
+                  "qty": "170 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO",
+                  "days": ["MAR"]
+                },
+                { "food": "MUESLI KETO", "qty": "15 g", "meal": "Colazione", "note": "", "days": ["MAR"] },
+                {
+                  "food": "SEMI DI LINO",
+                  "qty": "10 g",
+                  "meal": "Colazione",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["MAR", "VEN", "SAB", "DOM"]
+                },
+                { "food": "CANNELLA", "qty": "1 g", "meal": "Colazione", "note": "", "days": ["MAR", "SAB"] },
+                { "food": "Budino proteico Ehrmann", "qty": "130 g", "meal": "Colazione", "note": "", "days": ["MER"] },
+                { "food": "MANDORLE", "qty": "20 g", "meal": "Colazione", "note": "", "days": ["MER"] },
+                {
+                  "food": "Caffè",
+                  "qty": "45 g",
+                  "meal": "Colazione",
+                  "note": "1 TAZZINA",
+                  "days": ["MER", "VEN", "DOM"]
+                },
+                {
+                  "food": "PANCAKES",
+                  "qty": "40 g",
+                  "meal": "Colazione",
+                  "note": "MIX PER 2-3 PANCAKE",
+                  "days": ["VEN"]
+                },
+                {
+                  "food": "BURRO DI ARACHIDI",
+                  "qty": "15 g",
+                  "meal": "Colazione",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["VEN"]
+                },
+                { "food": "PANNA LIGHT", "qty": "30 g", "meal": "Colazione", "note": "", "days": ["VEN"] },
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 0%",
+                  "qty": "150 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO",
+                  "days": ["SAB"]
+                },
+                { "food": "MUESLI KETO", "qty": "10 g", "meal": "Colazione", "note": "1 PUGNO", "days": ["SAB"] },
+                { "food": "Budino proteico Ehrmann", "qty": "120 g", "meal": "Colazione", "note": "", "days": ["DOM"] },
+                { "food": "NOCCIOLE", "qty": "15 g", "meal": "Colazione", "note": "", "days": ["DOM"] },
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 0%",
+                  "qty": "100 g",
+                  "meal": "Spuntino",
+                  "note": "MEZZO VASETTO",
+                  "days": ["LUN", "GIO"]
+                },
+                {
+                  "food": "SEMI DI LINO",
+                  "qty": "10 g",
+                  "meal": "Spuntino",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MER", "GIO"]
+                },
+                { "food": "NOCI", "qty": "10 g", "meal": "Spuntino", "note": "2 GHERIGLI", "days": ["LUN"] },
+                { "food": "BRESAOLA", "qty": "50 g", "meal": "Spuntino", "note": "3 FETTE", "days": ["MAR"] },
+                {
+                  "food": "Philadelphia Active",
+                  "qty": "30 g",
+                  "meal": "Spuntino",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["MAR"]
+                },
+                { "food": "OLIVE VERDI", "qty": "20 g", "meal": "Spuntino", "note": "", "days": ["MAR"] },
+                { "food": "FRAGOLE", "qty": "60 g", "meal": "Spuntino", "note": "", "days": ["MER", "SAB"] },
+                { "food": "NOCI", "qty": "20 g", "meal": "Spuntino", "note": "", "days": ["MER"] },
+                {
+                  "food": "MANDORLE",
+                  "qty": "25 g",
+                  "meal": "Spuntino",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["VEN"]
+                },
+                { "food": "FINOCCHIO", "qty": "150 g", "meal": "Spuntino", "note": "", "days": ["VEN"] },
+                { "food": "MANDORLE", "qty": "25 g", "meal": "Spuntino", "note": "", "days": ["SAB"] },
+                { "food": "MANDORLE", "qty": "15 g", "meal": "Spuntino", "note": "", "days": ["DOM"] },
+                { "food": "FINOCCHIO", "qty": "100 g", "meal": "Spuntino", "note": "", "days": ["DOM"] },
+                {
+                  "food": "PETTO DI POLLO",
+                  "qty": "180 g",
+                  "meal": "Pranzo",
+                  "note": "1 PETTO",
+                  "days": ["LUN", "SAB"]
+                },
+                { "food": "ZUCCHINE", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["LUN"] },
+                {
+                  "food": "FUNGHI PRATAIOLI COLTIVATI",
+                  "qty": "100 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["LUN", "MER", "GIO"]
+                },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "PARMIGIANO", "qty": "25 g", "meal": "Pranzo", "note": "", "days": ["LUN"] },
+                {
+                  "food": "FESA DI TACCHINO",
+                  "qty": "180 g",
+                  "meal": "Pranzo",
+                  "note": "1 FETTINA GRANDE",
+                  "days": ["MAR"]
+                },
+                { "food": "BROCCOLO A TESTA", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["MAR"] },
+                {
+                  "food": "PARMIGIANO",
+                  "qty": "15 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUBETTO",
+                  "days": ["MAR", "VEN", "SAB"]
+                },
+                { "food": "LONZA DI MAIALE", "qty": "140 g", "meal": "Pranzo", "note": "1 FETTINA", "days": ["MER"] },
+                { "food": "FINOCCHIO", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "PARMIGIANO", "qty": "20 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "TOFU", "qty": "150 g", "meal": "Pranzo", "note": "1 VASCHETTA", "days": ["GIO"] },
+                { "food": "CICORIA", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "PASTA DI KONJAC", "qty": "75 g", "meal": "Pranzo", "note": "1 PORZIONE", "days": ["VEN"] },
+                { "food": "ragu", "qty": "100 g", "meal": "Pranzo", "note": "1 VASCHETTA", "days": ["VEN"] },
+                { "food": "ZUCCHINE", "qty": "200 g", "meal": "Pranzo", "note": "A PIACERE", "days": ["VEN", "DOM"] },
+                { "food": "CARCIOFI", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                { "food": "AVOCADO", "qty": "50 g", "meal": "Pranzo", "note": "METÀ", "days": ["SAB"] },
+                {
+                  "food": "hamburger di pollo e tacchino fileni",
+                  "qty": "140 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["DOM"]
+                },
+                { "food": "FUNGHI PRATAIOLI COLTIVATI", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                { "food": "PARMIGIANO", "qty": "15 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                {
+                  "food": "MANDORLE",
+                  "qty": "25 g",
+                  "meal": "Merenda",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["LUN"]
+                },
+                { "food": "FINOCCHIO", "qty": "150 g", "meal": "Merenda", "note": "", "days": ["LUN"] },
+                { "food": "NOCI", "qty": "10 g", "meal": "Merenda", "note": "3 GHERIGLI", "days": ["LUN"] },
+                {
+                  "food": "Frollini WHY chetogenici",
+                  "qty": "30 g",
+                  "meal": "Merenda",
+                  "note": "2 FROLLINI",
+                  "days": ["MAR"]
+                },
+                {
+                  "food": "BEVANDA A BASE DI MANDORLA ADEZ",
+                  "qty": "150 g",
+                  "meal": "Merenda",
+                  "note": "1 BICCHIERE",
+                  "days": ["MAR"]
+                },
+                {
+                  "food": "BURRO DI ARACHIDI",
+                  "qty": "15 g",
+                  "meal": "Merenda",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["MER"]
+                },
+                { "food": "KIWI", "qty": "75 g", "meal": "Merenda", "note": "1 KIWI", "days": ["GIO"] },
+                { "food": "MANDORLE", "qty": "25 g", "meal": "Merenda", "note": "", "days": ["GIO"] },
+                { "food": "NOCI", "qty": "15 g", "meal": "Merenda", "note": "", "days": ["GIO"] },
+                {
+                  "food": "Philadelphia Active",
+                  "qty": "30 g",
+                  "meal": "Merenda",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["VEN"]
+                },
+                { "food": "NOCI", "qty": "15 g", "meal": "Merenda", "note": "3 GHERIGLI", "days": ["VEN"] },
+                { "food": "Philadelphia Active", "qty": "30 g", "meal": "Merenda", "note": "", "days": ["SAB"] },
+                { "food": "NOCI", "qty": "20 g", "meal": "Merenda", "note": "", "days": ["SAB", "DOM"] },
+                { "food": "CICORIA", "qty": "80 g", "meal": "Merenda", "note": "", "days": ["DOM"] },
+                {
+                  "food": "TONNO AL NATURALE RIOMARE",
+                  "qty": "120 g",
+                  "meal": "Cena",
+                  "note": "2 SCATOLETTE",
+                  "days": ["LUN"]
+                },
+                { "food": "INSALATA", "qty": "100 g", "meal": "Cena", "note": "", "days": ["LUN", "DOM"] },
+                { "food": "POMODORINI", "qty": "60 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                { "food": "AVOCADO", "qty": "60 g", "meal": "Cena", "note": "METÀ", "days": ["LUN"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "SALMONE AFFUMICATO", "qty": "80 g", "meal": "Cena", "note": "2-3 FETTE", "days": ["MAR"] },
+                { "food": "SPINACI", "qty": "120 g", "meal": "Cena", "note": "", "days": ["MAR"] },
+                {
+                  "food": "BURRO GHEE CHIARIFICATO GRASS FED",
+                  "qty": "10 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["MAR"]
+                },
+                { "food": "RICOTTA DI VACCA", "qty": "80 g", "meal": "Cena", "note": "", "days": ["MAR", "GIO"] },
+                { "food": "MANDORLE", "qty": "15 g", "meal": "Cena", "note": "", "days": ["MAR"] },
+                {
+                  "food": "AVOCADO",
+                  "qty": "50 g",
+                  "meal": "Cena",
+                  "note": "METÀ",
+                  "days": ["MAR", "MER", "VEN", "DOM"]
+                },
+                { "food": "UOVA DI GALLINA", "qty": "110 g", "meal": "Cena", "note": "2", "days": ["MER", "VEN"] },
+                { "food": "ZUCCHINE", "qty": "200 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "RICOTTA DI VACCA", "qty": "100 g", "meal": "Cena", "note": "1 VASCHETTA", "days": ["MER"] },
+                {
+                  "food": "SGOMBRO AL NATURALE CARREFOUR",
+                  "qty": "90 g",
+                  "meal": "Cena",
+                  "note": "1 LATTINA",
+                  "days": ["GIO"]
+                },
+                { "food": "LATTUGA", "qty": "60 g", "meal": "Cena", "note": "", "days": ["GIO"] },
+                { "food": "AVOCADO", "qty": "40 g", "meal": "Cena", "note": "METÀ", "days": ["GIO"] },
+                { "food": "PARMIGIANO", "qty": "15 g", "meal": "Cena", "note": "1 CUBETTO", "days": ["GIO"] },
+                { "food": "CICORIA", "qty": "200 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                {
+                  "food": "RICOTTA DI VACCA",
+                  "qty": "80 g",
+                  "meal": "Cena",
+                  "note": "1 VASCHETTA SCARSA",
+                  "days": ["VEN"]
+                },
+                {
+                  "food": "insalata di mare",
+                  "qty": "180 g",
+                  "meal": "Cena",
+                  "note": "1 VASCHETTA SCARSA",
+                  "days": ["SAB"]
+                },
+                { "food": "UOVO SODO DI GALLINA", "qty": "55 g", "meal": "Cena", "note": "1", "days": ["SAB"] },
+                { "food": "LATTUGA", "qty": "100 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                { "food": "POMODORINI", "qty": "80 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                {
+                  "food": "MOZZARELLA SKYRELLA PROTEICA",
+                  "qty": "125 g",
+                  "meal": "Cena",
+                  "note": "1",
+                  "days": ["DOM"]
+                },
+                {
+                  "food": "PROSCIUTTO CRUDO DI PARMA SENZA GRASSO",
+                  "qty": "40 g",
+                  "meal": "Cena",
+                  "note": "2 FETTE",
+                  "days": ["DOM"]
+                },
+                { "food": "PARMIGIANO", "qty": "10 g", "meal": "Cena", "note": "", "days": ["DOM"] }
+              ],
+              "check": "media 1421 kcal/die"
+            },
+            {
+              "label": "B",
+              "rows": [
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 5%",
+                  "qty": "150 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "semi di chia",
+                  "qty": "15 g",
+                  "meal": "Colazione",
+                  "note": "",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "SEMI DI LINO",
+                  "qty": "10 g",
+                  "meal": "Colazione",
+                  "note": "",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "FRUTTI DI BOSCO",
+                  "qty": "20 g",
+                  "meal": "Colazione",
+                  "note": "",
+                  "days": ["MAR", "GIO", "VEN", "SAB"]
+                },
+                {
+                  "food": "MANDORLE",
+                  "qty": "10 g",
+                  "meal": "Colazione",
+                  "note": "",
+                  "days": ["MAR", "GIO", "VEN", "SAB"]
+                },
+                {
+                  "food": "MANDORLE",
+                  "qty": "25 g",
+                  "meal": "Spuntino",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["LUN", "MAR", "MER", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "MANDORLE",
+                  "qty": "15 g",
+                  "meal": "Spuntino",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["GIO"]
+                },
+                {
+                  "food": "AVOCADO",
+                  "qty": "50 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "VERDURE O ORTAGGI",
+                  "qty": "100 g",
+                  "meal": "Pranzo",
+                  "note": "A PIACERE",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "PETTO DI POLLO", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["LUN", "SAB"] },
+                { "food": "PETTO DI TACCHINO", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["MAR"] },
+                { "food": "HAMBURGER DI BOVINO", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "FILETTO DI VITELLO", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                {
+                  "food": "coscia di pollo (senza pelle e ossa)",
+                  "qty": "150 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["VEN"]
+                },
+                { "food": "FESA DI TACCHINO", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                {
+                  "food": "QUARK MAGRO",
+                  "qty": "100 g",
+                  "meal": "Merenda",
+                  "note": "",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "MANDORLE",
+                  "qty": "15 g",
+                  "meal": "Merenda",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "VERDURE O ORTAGGI",
+                  "qty": "150 g",
+                  "meal": "Cena",
+                  "note": "A PIACERE",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "PARMIGIANO",
+                  "qty": "20 g",
+                  "meal": "Cena",
+                  "note": "1 CUBETTO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "HAMBURGER DI BOVINO", "qty": "180 g", "meal": "Cena", "note": "", "days": ["LUN", "DOM"] },
+                { "food": "UOVA DI GALLINA", "qty": "165 g", "meal": "Cena", "note": "3 UOVA", "days": ["MAR", "SAB"] },
+                { "food": "PETTO DI POLLO", "qty": "180 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "BISTECCA DI MAIALE", "qty": "180 g", "meal": "Cena", "note": "", "days": ["GIO"] },
+                { "food": "BISTECCA DI MANZO", "qty": "180 g", "meal": "Cena", "note": "", "days": ["VEN"] }
+              ],
+              "check": "LUN carb 31 g su 30 · DOM +1 g carb"
+            },
+            {
+              "label": "C",
+              "rows": [
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 5%",
+                  "qty": "150 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO",
+                  "days": ["LUN", "MER", "SAB", "DOM"]
+                },
+                {
+                  "food": "SEMI DI LINO",
+                  "qty": "10 g",
+                  "meal": "Colazione",
+                  "note": "MACINATI",
+                  "days": ["LUN", "SAB", "DOM"]
+                },
+                {
+                  "food": "FRUTTI DI BOSCO",
+                  "qty": "50 g",
+                  "meal": "Colazione",
+                  "note": "",
+                  "days": ["LUN", "MAR", "DOM"]
+                },
+                {
+                  "food": "Keto-crema nocciola",
+                  "qty": "10 g",
+                  "meal": "Colazione",
+                  "note": "1 CUCCHIAINO",
+                  "days": ["LUN", "SAB"]
+                },
+                {
+                  "food": "Caffè",
+                  "qty": "45 g",
+                  "meal": "Colazione",
+                  "note": "1 TAZZINA",
+                  "days": ["LUN", "MAR", "GIO", "VEN", "SAB"]
+                },
+                {
+                  "food": "Frollini WHY chetogenici",
+                  "qty": "30 g",
+                  "meal": "Colazione",
+                  "note": "3 BISCOTTI",
+                  "days": ["MAR"]
+                },
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 0%",
+                  "qty": "150 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO",
+                  "days": ["MAR", "GIO"]
+                },
+                {
+                  "food": "Brioche (cornetti) Keto",
+                  "qty": "50 g",
+                  "meal": "Colazione",
+                  "note": "1 BRIOCHE",
+                  "days": ["MER"]
+                },
+                { "food": "THÈ", "qty": "200 g", "meal": "Colazione", "note": "1 TAZZA", "days": ["MER", "DOM"] },
+                { "food": "FRUTTI DI BOSCO", "qty": "30 g", "meal": "Colazione", "note": "", "days": ["MER", "GIO"] },
+                { "food": "MUESLI KETO", "qty": "25 g", "meal": "Colazione", "note": "25 G", "days": ["GIO"] },
+                {
+                  "food": "Budino proteico Ehrmann",
+                  "qty": "200 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO",
+                  "days": ["VEN"]
+                },
+                {
+                  "food": "MANDORLE",
+                  "qty": "15 g",
+                  "meal": "Colazione",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["VEN"]
+                },
+                { "food": "FRUTTI DI BOSCO", "qty": "40 g", "meal": "Colazione", "note": "", "days": ["SAB"] },
+                {
+                  "food": "Frollini WHY chetogenici",
+                  "qty": "20 g",
+                  "meal": "Colazione",
+                  "note": "2 BISCOTTI",
+                  "days": ["DOM"]
+                },
+                {
+                  "food": "MANDORLE",
+                  "qty": "20 g",
+                  "meal": "Spuntino",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["LUN"]
+                },
+                {
+                  "food": "PISTACCHI",
+                  "qty": "20 g",
+                  "meal": "Spuntino",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["MAR", "DOM"]
+                },
+                { "food": "OLIVE VERDI", "qty": "40 g", "meal": "Spuntino", "note": "6-7 OLIVE", "days": ["MER"] },
+                { "food": "BRESAOLA", "qty": "50 g", "meal": "Spuntino", "note": "6 FETTE", "days": ["MER"] },
+                { "food": "NOCI", "qty": "25 g", "meal": "Spuntino", "note": "ATTENZIONE ALLA DOSE", "days": ["GIO"] },
+                { "food": "AVOCADO", "qty": "70 g", "meal": "Spuntino", "note": "1/2 AVOCADO", "days": ["VEN"] },
+                {
+                  "food": "MANDORLE",
+                  "qty": "25 g",
+                  "meal": "Spuntino",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["SAB"]
+                },
+                { "food": "PETTO DI POLLO", "qty": "180 g", "meal": "Pranzo", "note": "", "days": ["LUN"] },
+                { "food": "ZUCCHINE", "qty": "250 g", "meal": "Pranzo", "note": "", "days": ["LUN"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "15 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO E MEZZO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "PARMIGIANO",
+                  "qty": "30 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUBETTO E MEZZO",
+                  "days": ["LUN", "GIO"]
+                },
+                { "food": "UOVA DI GALLINA", "qty": "165 g", "meal": "Pranzo", "note": "3", "days": ["MAR"] },
+                { "food": "INSALATA", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["MAR", "SAB"] },
+                { "food": "POMODORINI", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["MAR", "VEN", "SAB"] },
+                { "food": "FETA", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["MAR"] },
+                { "food": "PETTO DI TACCHINO", "qty": "180 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                {
+                  "food": "PARMIGIANO",
+                  "qty": "20 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUBETTO",
+                  "days": ["MER", "VEN", "DOM"]
+                },
+                { "food": "BROCCOLO A TESTA", "qty": "120 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                {
+                  "food": "hamburger di pollo e tacchino fileni",
+                  "qty": "150 g",
+                  "meal": "Pranzo",
+                  "note": "1 HAMBURGER",
+                  "days": ["GIO"]
+                },
+                { "food": "INSALATA", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "tartare di manzo", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                { "food": "RUCOLA", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                { "food": "arrosto di vitello", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                { "food": "fegato", "qty": "120 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                { "food": "ZUCCHINE", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                {
+                  "food": "NOCI",
+                  "qty": "25 g",
+                  "meal": "Merenda",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["LUN", "SAB"]
+                },
+                {
+                  "food": "Cioccolato extra fondente 85% Lindt",
+                  "qty": "15 g",
+                  "meal": "Merenda",
+                  "note": "1 QUADRATINO E MEZZO",
+                  "days": ["MAR"]
+                },
+                {
+                  "food": "MANDORLE",
+                  "qty": "20 g",
+                  "meal": "Merenda",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["MER"]
+                },
+                {
+                  "food": "PISTACCHI",
+                  "qty": "20 g",
+                  "meal": "Merenda",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["GIO", "VEN"]
+                },
+                { "food": "OLIVE NERE", "qty": "40 g", "meal": "Merenda", "note": "7-8 OLIVE", "days": ["DOM"] },
+                { "food": "SALMONE AFFUMICATO", "qty": "120 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                { "food": "INSALATA", "qty": "150 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                { "food": "POMODORINI", "qty": "100 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN"]
+                },
+                { "food": "AVOCADO", "qty": "80 g", "meal": "Cena", "note": "1/2 AVOCADO", "days": ["LUN", "DOM"] },
+                {
+                  "food": "SGOMBRO O MACCARELLO AL NATURALE",
+                  "qty": "180 g",
+                  "meal": "Cena",
+                  "note": "SGOCCIOLATO",
+                  "days": ["MAR"]
+                },
+                { "food": "CICORIA", "qty": "200 g", "meal": "Cena", "note": "", "days": ["MAR", "GIO", "DOM"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "15 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO E MEZZO",
+                  "days": ["MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "OLIVE NERE", "qty": "30 g", "meal": "Cena", "note": "5-6 OLIVE", "days": ["MAR", "VEN"] },
+                { "food": "ZUCCHINE", "qty": "250 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "AVOCADO", "qty": "60 g", "meal": "Cena", "note": "", "days": ["MER", "SAB"] },
+                {
+                  "food": "VONGOLE IN SCATOLA AL NATURALE",
+                  "qty": "80 g",
+                  "meal": "Cena",
+                  "note": "SGOCCIOLATE",
+                  "days": ["MER"]
+                },
+                {
+                  "food": "TONNO AL NATURALE RIOMARE",
+                  "qty": "120 g",
+                  "meal": "Cena",
+                  "note": "2 SCATOLETTE SGOCCIOLATE",
+                  "days": ["GIO"]
+                },
+                { "food": "UOVO SODO DI GALLINA", "qty": "55 g", "meal": "Cena", "note": "1", "days": ["GIO"] },
+                { "food": "POMODORINI", "qty": "80 g", "meal": "Cena", "note": "", "days": ["GIO", "SAB"] },
+                { "food": "PARMIGIANO", "qty": "20 g", "meal": "Cena", "note": "1 CUBETTO", "days": ["GIO"] },
+                {
+                  "food": "SARDINE SOTT'OLIO SGOCCIOLATE",
+                  "qty": "100 g",
+                  "meal": "Cena",
+                  "note": "SGOCCIOLATE",
+                  "days": ["VEN"]
+                },
+                { "food": "FINOCCHIO", "qty": "200 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                { "food": "insalata di mare", "qty": "150 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                { "food": "INSALATA", "qty": "100 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                {
+                  "food": "ACCIUGHE o ALICI SOTT'OLIO SGOCCIOLATE",
+                  "qty": "50 g",
+                  "meal": "Cena",
+                  "note": "SGOCCIOLATE",
+                  "days": ["DOM"]
+                },
+                { "food": "UOVA DI GALLINA", "qty": "110 g", "meal": "Cena", "note": "2", "days": ["DOM"] }
+              ],
+              "check": "kcal ok · carb ok"
+            },
+            {
+              "label": "D",
+              "rows": [
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 5%",
+                  "qty": "150 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO",
+                  "days": ["LUN", "MAR", "GIO", "VEN", "SAB"]
+                },
+                { "food": "MUESLI KETO", "qty": "20 g", "meal": "Colazione", "note": "1 PORZIONE", "days": ["LUN"] },
+                {
+                  "food": "Caffè",
+                  "qty": "45 g",
+                  "meal": "Colazione",
+                  "note": "1 TAZZINA",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "Brioche (cornetti) Keto",
+                  "qty": "50 g",
+                  "meal": "Colazione",
+                  "note": "1 BRIOCHE",
+                  "days": ["MAR", "VEN"]
+                },
+                {
+                  "food": "Budino proteico Ehrmann",
+                  "qty": "200 g",
+                  "meal": "Colazione",
+                  "note": "1 VASETTO",
+                  "days": ["MER", "DOM"]
+                },
+                {
+                  "food": "Keto-crema nocciola",
+                  "qty": "15 g",
+                  "meal": "Colazione",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["MER"]
+                },
+                { "food": "NOCI", "qty": "20 g", "meal": "Colazione", "note": "ATTENZIONE ALLA DOSE", "days": ["MER"] },
+                {
+                  "food": "Cioccolato extra fondente 85% Lindt",
+                  "qty": "20 g",
+                  "meal": "Colazione",
+                  "note": "2 QUADRATINI",
+                  "days": ["GIO"]
+                },
+                { "food": "MUESLI KETO", "qty": "15 g", "meal": "Colazione", "note": "1 PORZIONE", "days": ["GIO"] },
+                {
+                  "food": "Keto-crema nocciola",
+                  "qty": "10 g",
+                  "meal": "Colazione",
+                  "note": "1 VELO",
+                  "days": ["VEN"]
+                },
+                { "food": "MUESLI KETO", "qty": "25 g", "meal": "Colazione", "note": "1 PORZIONE", "days": ["SAB"] },
+                {
+                  "food": "Keto-crema nocciola",
+                  "qty": "10 g",
+                  "meal": "Colazione",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["DOM"]
+                },
+                { "food": "NOCI", "qty": "15 g", "meal": "Colazione", "note": "ATTENZIONE ALLA DOSE", "days": ["DOM"] },
+                {
+                  "food": "NOCI",
+                  "qty": "15 g",
+                  "meal": "Spuntino",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["LUN", "VEN"]
+                },
+                {
+                  "food": "MANDORLE",
+                  "qty": "15 g",
+                  "meal": "Spuntino",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["MAR", "SAB", "DOM"]
+                },
+                { "food": "PHILADELPHIA ORIGINAL", "qty": "30 g", "meal": "Spuntino", "note": "", "days": ["MER"] },
+                { "food": "OLIVE VERDI", "qty": "30 g", "meal": "Spuntino", "note": "", "days": ["MER"] },
+                {
+                  "food": "NOCCIOLE",
+                  "qty": "15 g",
+                  "meal": "Spuntino",
+                  "note": "ATTENZIONE ALLA DOSE",
+                  "days": ["GIO"]
+                },
+                {
+                  "food": "TONNO AL NATURALE RIOMARE",
+                  "qty": "120 g",
+                  "meal": "Pranzo",
+                  "note": "2 SCATOLETTE",
+                  "days": ["LUN"]
+                },
+                { "food": "INSALATA", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["LUN", "MAR", "SAB"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "AVOCADO", "qty": "100 g", "meal": "Pranzo", "note": "1/2", "days": ["LUN", "MER", "SAB"] },
+                {
+                  "food": "SEMI DI LINO",
+                  "qty": "10 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "SGOMBRO SOTT'OLIO SGOCCIOLATO",
+                  "qty": "80 g",
+                  "meal": "Pranzo",
+                  "note": "1 SCATOLETTA",
+                  "days": ["MAR"]
+                },
+                { "food": "AVOCADO", "qty": "80 g", "meal": "Pranzo", "note": "1/2", "days": ["MAR", "GIO", "VEN"] },
+                {
+                  "food": "SARDINE SOTT'OLIO SGOCCIOLATE",
+                  "qty": "80 g",
+                  "meal": "Pranzo",
+                  "note": "1 SCATOLETTA",
+                  "days": ["MER"]
+                },
+                { "food": "FINOCCHIO", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                {
+                  "food": "tonno al naturale nostromo",
+                  "qty": "120 g",
+                  "meal": "Pranzo",
+                  "note": "2 SCATOLETTE",
+                  "days": ["GIO"]
+                },
+                { "food": "INSALATA", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["GIO", "VEN", "DOM"] },
+                { "food": "POMODORINI", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                {
+                  "food": "insalata di mare",
+                  "qty": "150 g",
+                  "meal": "Pranzo",
+                  "note": "1 VASCHETTA",
+                  "days": ["VEN"]
+                },
+                {
+                  "food": "SALMONE AFFUMICATO",
+                  "qty": "80 g",
+                  "meal": "Pranzo",
+                  "note": "1 VASCHETTA",
+                  "days": ["SAB"]
+                },
+                {
+                  "food": "TONNO LEGGERO RIOMARE",
+                  "qty": "120 g",
+                  "meal": "Pranzo",
+                  "note": "2 SCATOLETTE",
+                  "days": ["DOM"]
+                },
+                { "food": "FINOCCHIO", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                { "food": "AVOCADO", "qty": "70 g", "meal": "Pranzo", "note": "1/2", "days": ["DOM"] },
+                {
+                  "food": "Budino proteico Ehrmann",
+                  "qty": "200 g",
+                  "meal": "Merenda",
+                  "note": "1 VASETTO",
+                  "days": ["LUN"]
+                },
+                {
+                  "food": "Keto-crema nocciola",
+                  "qty": "20 g",
+                  "meal": "Merenda",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["MAR"]
+                },
+                { "food": "NOCI", "qty": "10 g", "meal": "Merenda", "note": "ATTENZIONE ALLA DOSE", "days": ["MAR"] },
+                {
+                  "food": "YOGURT GRECO FAGE TOTAL 5%",
+                  "qty": "150 g",
+                  "meal": "Merenda",
+                  "note": "1 VASETTO",
+                  "days": ["MER", "DOM"]
+                },
+                { "food": "OSELLA PROTEIN", "qty": "70 g", "meal": "Merenda", "note": "", "days": ["GIO"] },
+                {
+                  "food": "Budino proteico Ehrmann",
+                  "qty": "150 g",
+                  "meal": "Merenda",
+                  "note": "1 VASETTO",
+                  "days": ["VEN"]
+                },
+                {
+                  "food": "Cioccolato extra fondente 85% Lindt",
+                  "qty": "20 g",
+                  "meal": "Merenda",
+                  "note": "2 QUADRATINI",
+                  "days": ["SAB"]
+                },
+                { "food": "SALMONE AFFUMICATO", "qty": "80 g", "meal": "Cena", "note": "1 VASCHETTA", "days": ["LUN"] },
+                {
+                  "food": "RUCOLA",
+                  "qty": "80 g",
+                  "meal": "Cena",
+                  "note": "",
+                  "days": ["LUN", "MAR", "GIO", "SAB", "DOM"]
+                },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "MOZZARELLA DI VACCA", "qty": "100 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                { "food": "UOVO SODO DI GALLINA", "qty": "110 g", "meal": "Cena", "note": "2", "days": ["MAR", "SAB"] },
+                { "food": "CETRIOLI", "qty": "150 g", "meal": "Cena", "note": "", "days": ["MAR", "GIO"] },
+                { "food": "MOZZARELLA DI VACCA", "qty": "80 g", "meal": "Cena", "note": "", "days": ["MAR"] },
+                {
+                  "food": "SALMONE AFFUMICATO",
+                  "qty": "100 g",
+                  "meal": "Cena",
+                  "note": "1 VASCHETTA",
+                  "days": ["MER"]
+                },
+                { "food": "INSALATA", "qty": "200 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "OLIVE NERE", "qty": "30 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "FESA DI TACCHINO", "qty": "120 g", "meal": "Cena", "note": "1 VASCHETTA", "days": ["GIO"] },
+                { "food": "AVOCADO", "qty": "50 g", "meal": "Cena", "note": "1/4", "days": ["GIO"] },
+                { "food": "OLIVE VERDI", "qty": "30 g", "meal": "Cena", "note": "", "days": ["GIO", "VEN"] },
+                {
+                  "food": "SGOMBRO SOTT'OLIO SGOCCIOLATO",
+                  "qty": "70 g",
+                  "meal": "Cena",
+                  "note": "1 SCATOLETTA",
+                  "days": ["VEN"]
+                },
+                { "food": "FINOCCHIO", "qty": "200 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                { "food": "MOZZARELLA DI VACCA", "qty": "60 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                {
+                  "food": "TONNO AL NATURALE RIOMARE",
+                  "qty": "60 g",
+                  "meal": "Cena",
+                  "note": "1 SCATOLETTA",
+                  "days": ["SAB"]
+                },
+                { "food": "POMODORINI", "qty": "60 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                { "food": "FETA", "qty": "70 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                { "food": "BRESAOLA", "qty": "65 g", "meal": "Cena", "note": "8 FETTE", "days": ["DOM"] },
+                { "food": "PARMIGIANO", "qty": "40 g", "meal": "Cena", "note": "2 CUBETTI", "days": ["DOM"] },
+                { "food": "OLIVE VERDI", "qty": "40 g", "meal": "Cena", "note": "", "days": ["DOM"] }
+              ],
+              "check": "kcal ok · carb ok"
+            }
+          ]
+        },
+        {
+          "id": "b4",
+          "title": "1200 kcal, senza colazione",
+          "text": "Dieta varia per paziente 1200 cal no colazione spuntini frutta mista poca carne una volta pollo una volta hamburger. Pranzo più veloce. Anche insalatone",
+          "answers": ["Nessuna patologia."],
+          "plans": [
+            {
+              "label": "A",
+              "rows": [
+                {
+                  "food": "THÈ",
+                  "qty": "200 g",
+                  "meal": "Colazione",
+                  "note": "1 TAZZA",
+                  "days": ["LUN", "MER", "VEN", "DOM"]
+                },
+                {
+                  "food": "Caffè",
+                  "qty": "45 g",
+                  "meal": "Colazione",
+                  "note": "1 TAZZINA",
+                  "days": ["MAR", "GIO", "SAB"]
+                },
+                { "food": "MELA GOLDEN", "qty": "200 g", "meal": "Spuntino", "note": "1 MELA GRANDE", "days": ["LUN"] },
+                { "food": "PERA", "qty": "180 g", "meal": "Spuntino", "note": "1 PERA MEDIA", "days": ["MAR", "SAB"] },
+                { "food": "KIWI", "qty": "150 g", "meal": "Spuntino", "note": "2 KIWI", "days": ["MER"] },
+                { "food": "FRAGOLE", "qty": "200 g", "meal": "Spuntino", "note": "", "days": ["GIO"] },
+                { "food": "ARANCE", "qty": "200 g", "meal": "Spuntino", "note": "1 ARANCIA GRANDE", "days": ["VEN"] },
+                { "food": "MELA GOLDEN", "qty": "180 g", "meal": "Spuntino", "note": "1 MELA", "days": ["DOM"] },
+                {
+                  "food": "PASTA DI SEMOLA INTEGRALE",
+                  "qty": "70 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["LUN", "MER"]
+                },
+                { "food": "POMODORINI", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["LUN"] },
+                {
+                  "food": "TONNO AL NATURALE RIOMARE",
+                  "qty": "60 g",
+                  "meal": "Pranzo",
+                  "note": "1 SCATOLETTA",
+                  "days": ["LUN"]
+                },
+                { "food": "PARMIGIANO", "qty": "5 g", "meal": "Pranzo", "note": "", "days": ["LUN", "MER", "SAB"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "FARRO", "qty": "70 g", "meal": "Pranzo", "note": "", "days": ["MAR"] },
+                { "food": "CECI IN SCATOLA", "qty": "130 g", "meal": "Pranzo", "note": "SGOCCIOLATI", "days": ["MAR"] },
+                { "food": "INSALATA", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["MAR"] },
+                {
+                  "food": "POMODORI DA INSALATA",
+                  "qty": "150 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["MAR", "VEN", "DOM"]
+                },
+                {
+                  "food": "LENTICCHIE IN SCATOLA",
+                  "qty": "150 g",
+                  "meal": "Pranzo",
+                  "note": "SGOCCIOLATE",
+                  "days": ["MER"]
+                },
+                {
+                  "food": "POMODORI PELATI IN SCATOLA CON LIQUIDO",
+                  "qty": "100 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["MER", "SAB"]
+                },
+                { "food": "COUS COUS", "qty": "70 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "PISELLI SURGELATI", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "ZUCCHINE", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "Feta light", "qty": "40 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "INSALATA", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                { "food": "MAIS DOLCE IN SCATOLA", "qty": "60 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                { "food": "MOZZARELLA LIGHT MILBONA", "qty": "60 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                { "food": "UOVO SODO DI GALLINA", "qty": "55 g", "meal": "Pranzo", "note": "1 UOVO", "days": ["VEN"] },
+                { "food": "PANE INTEGRALE", "qty": "40 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                { "food": "PASTA DI SEMOLA", "qty": "70 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                {
+                  "food": "FAGIOLI IN SCATOLA",
+                  "qty": "150 g",
+                  "meal": "Pranzo",
+                  "note": "SGOCCIOLATI",
+                  "days": ["SAB"]
+                },
+                { "food": "PANE INTEGRALE", "qty": "60 g", "meal": "Pranzo", "note": "2 FETTE", "days": ["DOM"] },
+                { "food": "FIOR DI LATTE", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                { "food": "RUCOLA", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                {
+                  "food": "MACEDONIA FRESCA",
+                  "qty": "200 g",
+                  "meal": "Merenda",
+                  "note": "FRUTTA MISTA",
+                  "days": ["LUN"]
+                },
+                { "food": "ARANCE", "qty": "200 g", "meal": "Merenda", "note": "1 ARANCIA GRANDE", "days": ["MAR"] },
+                { "food": "FRAGOLE", "qty": "150 g", "meal": "Merenda", "note": "", "days": ["MAR"] },
+                {
+                  "food": "FRUTTA FRESCA",
+                  "qty": "250 g",
+                  "meal": "Merenda",
+                  "note": "FRUTTA MISTA",
+                  "days": ["MER", "SAB"]
+                },
+                {
+                  "food": "MACEDONIA FRESCA",
+                  "qty": "150 g",
+                  "meal": "Merenda",
+                  "note": "FRUTTA MISTA",
+                  "days": ["GIO"]
+                },
+                {
+                  "food": "MACEDONIA FRESCA",
+                  "qty": "220 g",
+                  "meal": "Merenda",
+                  "note": "FRUTTA MISTA",
+                  "days": ["VEN"]
+                },
+                { "food": "BANANA", "qty": "120 g", "meal": "Merenda", "note": "1 BANANA PICCOLA", "days": ["DOM"] },
+                { "food": "MERLUZZO SURGELATO", "qty": "200 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                { "food": "PATATE", "qty": "200 g", "meal": "Cena", "note": "2 PATATE MEDIE", "days": ["LUN", "MER"] },
+                { "food": "ZUCCHINE", "qty": "200 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "DOM"]
+                },
+                { "food": "UOVA DI GALLINA", "qty": "110 g", "meal": "Cena", "note": "2 UOVA", "days": ["MAR"] },
+                { "food": "SPINACI", "qty": "200 g", "meal": "Cena", "note": "", "days": ["MAR"] },
+                { "food": "PANE INTEGRALE", "qty": "60 g", "meal": "Cena", "note": "2 FETTE", "days": ["MAR"] },
+                {
+                  "food": "PETTO DI POLLO",
+                  "qty": "180 g",
+                  "meal": "Cena",
+                  "note": "1 FETTINA GRANDE, ALLA PIASTRA",
+                  "days": ["MER"]
+                },
+                { "food": "INSALATA", "qty": "80 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "ORATA SURGELATA", "qty": "200 g", "meal": "Cena", "note": "", "days": ["GIO"] },
+                { "food": "CARCIOFI", "qty": "150 g", "meal": "Cena", "note": "", "days": ["GIO"] },
+                { "food": "PANE INTEGRALE", "qty": "50 g", "meal": "Cena", "note": "1 FETTA MEDIA", "days": ["GIO"] },
+                {
+                  "food": "HAMBURGER DI BOVINO",
+                  "qty": "130 g",
+                  "meal": "Cena",
+                  "note": "1 HAMBURGER, ALLA PIASTRA",
+                  "days": ["VEN"]
+                },
+                { "food": "RUCOLA", "qty": "50 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                { "food": "PATATE", "qty": "150 g", "meal": "Cena", "note": "1 PATATA GRANDE", "days": ["VEN"] },
+                { "food": "SALMONE", "qty": "120 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                { "food": "BROCCOLO A TESTA", "qty": "200 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                { "food": "PANE INTEGRALE", "qty": "40 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "5 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAINO",
+                  "days": ["SAB"]
+                },
+                { "food": "FILETTO DI PLATESSA", "qty": "200 g", "meal": "Cena", "note": "", "days": ["DOM"] },
+                { "food": "RISO INTEGRALE", "qty": "50 g", "meal": "Cena", "note": "", "days": ["DOM"] },
+                { "food": "BIETA O BIETOLA", "qty": "200 g", "meal": "Cena", "note": "", "days": ["DOM"] }
+              ],
+              "check": "kcal ok"
+            },
+            {
+              "label": "B",
+              "rows": [
+                {
+                  "food": "FRUTTA FRESCA",
+                  "qty": "200 g",
+                  "meal": "Spuntino",
+                  "note": "FRUTTA MISTA",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "INSALATA", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["LUN", "MER"] },
+                { "food": "POMODORINI", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["LUN", "MER"] },
+                {
+                  "food": "TONNO AL NATURALE RIOMARE",
+                  "qty": "80 g",
+                  "meal": "Pranzo",
+                  "note": "2 SCATOLETTE",
+                  "days": ["LUN"]
+                },
+                { "food": "mais dolce prix", "qty": "150 g", "meal": "Pranzo", "note": "1 LATTA", "days": ["LUN"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "PANE INTEGRALE",
+                  "qty": "50 g",
+                  "meal": "Pranzo",
+                  "note": "1 FETTA",
+                  "days": ["LUN", "MER", "SAB"]
+                },
+                {
+                  "food": "PASTA DI SEMOLA INTEGRALE",
+                  "qty": "80 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["MAR", "VEN", "DOM"]
+                },
+                {
+                  "food": "VERDURE O ORTAGGI",
+                  "qty": "200 g",
+                  "meal": "Pranzo",
+                  "note": "A PIACERE",
+                  "days": ["MAR", "GIO", "VEN"]
+                },
+                { "food": "PARMIGIANO", "qty": "10 g", "meal": "Pranzo", "note": "", "days": ["MAR", "VEN"] },
+                { "food": "CECI IN SCATOLA", "qty": "200 g", "meal": "Pranzo", "note": "SGOCCIOLATI", "days": ["MER"] },
+                { "food": "mais dolce prix", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "COUS COUS", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                {
+                  "food": "TONNO AL NATURALE RIOMARE",
+                  "qty": "60 g",
+                  "meal": "Pranzo",
+                  "note": "1 SCATOLETTA",
+                  "days": ["GIO"]
+                },
+                { "food": "RUCOLA", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                { "food": "POMODORINI", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                { "food": "MOZZARELLA LIGHT MILBONA", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                {
+                  "food": "LENTICCHIE IN SCATOLA",
+                  "qty": "150 g",
+                  "meal": "Pranzo",
+                  "note": "SGOCCIOLATE",
+                  "days": ["DOM"]
+                },
+                { "food": "VERDURE O ORTAGGI", "qty": "150 g", "meal": "Pranzo", "note": "A PIACERE", "days": ["DOM"] },
+                {
+                  "food": "FRUTTA FRESCA",
+                  "qty": "200 g",
+                  "meal": "Merenda",
+                  "note": "FRUTTA MISTA",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "FILETTI DI ORATA D'ALLEVAMENTO",
+                  "qty": "150 g",
+                  "meal": "Cena",
+                  "note": "",
+                  "days": ["LUN"]
+                },
+                { "food": "ZUCCHINE", "qty": "200 g", "meal": "Cena", "note": "", "days": ["LUN", "DOM"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "PANE INTEGRALE", "qty": "70 g", "meal": "Cena", "note": "1 FETTA", "days": ["LUN"] },
+                { "food": "UOVA DI GALLINA", "qty": "110 g", "meal": "Cena", "note": "2", "days": ["MAR", "DOM"] },
+                {
+                  "food": "VERDURE O ORTAGGI",
+                  "qty": "200 g",
+                  "meal": "Cena",
+                  "note": "A PIACERE",
+                  "days": ["MAR", "MER", "GIO", "SAB"]
+                },
+                { "food": "PANE INTEGRALE", "qty": "90 g", "meal": "Cena", "note": "", "days": ["MAR", "SAB"] },
+                { "food": "PETTO DI POLLO", "qty": "150 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "PANE INTEGRALE", "qty": "80 g", "meal": "Cena", "note": "", "days": ["MER", "DOM"] },
+                { "food": "SOGLIOLA", "qty": "180 g", "meal": "Cena", "note": "", "days": ["GIO"] },
+                { "food": "PATATE", "qty": "200 g", "meal": "Cena", "note": "2", "days": ["GIO", "VEN"] },
+                { "food": "HAMBURGER DI BOVINO", "qty": "150 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                { "food": "INSALATA", "qty": "80 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                { "food": "POMODORINI", "qty": "100 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                { "food": "SPIGOLA O BRANZINO", "qty": "180 g", "meal": "Cena", "note": "", "days": ["SAB"] }
+              ],
+              "check": "kcal ok"
+            },
+            {
+              "label": "C",
+              "rows": [
+                {
+                  "food": "FRUTTA FRESCA",
+                  "qty": "50 g",
+                  "meal": "Spuntino",
+                  "note": "",
+                  "days": ["LUN", "MAR", "SAB", "DOM"]
+                },
+                { "food": "MELA GOLDEN", "qty": "50 g", "meal": "Spuntino", "note": "", "days": ["LUN"] },
+                { "food": "FRAGOLE", "qty": "50 g", "meal": "Spuntino", "note": "", "days": ["MAR", "VEN", "DOM"] },
+                { "food": "BANANA", "qty": "50 g", "meal": "Spuntino", "note": "", "days": ["MAR", "DOM"] },
+                { "food": "ARANCE", "qty": "50 g", "meal": "Spuntino", "note": "", "days": ["MER"] },
+                { "food": "KIWI", "qty": "50 g", "meal": "Spuntino", "note": "", "days": ["MER"] },
+                { "food": "FRUTTA FRESCA", "qty": "40 g", "meal": "Spuntino", "note": "", "days": ["GIO"] },
+                { "food": "PERA", "qty": "50 g", "meal": "Spuntino", "note": "", "days": ["GIO"] },
+                { "food": "ANANAS", "qty": "50 g", "meal": "Spuntino", "note": "", "days": ["VEN"] },
+                { "food": "MELA", "qty": "50 g", "meal": "Spuntino", "note": "", "days": ["SAB"] },
+                { "food": "MANDARANCI e CLEMENTINE", "qty": "50 g", "meal": "Spuntino", "note": "", "days": ["SAB"] },
+                {
+                  "food": "TONNO AL NATURALE",
+                  "qty": "120 g",
+                  "meal": "Pranzo",
+                  "note": "2 SCATOLETTE",
+                  "days": ["LUN"]
+                },
+                {
+                  "food": "PANE INTEGRALE",
+                  "qty": "50 g",
+                  "meal": "Pranzo",
+                  "note": "1 PANINO PICCOLO",
+                  "days": ["LUN", "MER"]
+                },
+                { "food": "VERDURE O ORTAGGI", "qty": "200 g", "meal": "Pranzo", "note": "A PIACERE", "days": ["LUN"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "PASTA DI SEMOLA",
+                  "qty": "30 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["LUN", "MER", "VEN", "SAB"]
+                },
+                {
+                  "food": "FAGIOLI IN SCATOLA",
+                  "qty": "150 g",
+                  "meal": "Pranzo",
+                  "note": "SGOCCIOLATI",
+                  "days": ["MAR"]
+                },
+                { "food": "RISO INTEGRALE", "qty": "30 g", "meal": "Pranzo", "note": "", "days": ["MAR", "DOM"] },
+                {
+                  "food": "VERDURE O ORTAGGI",
+                  "qty": "200 g",
+                  "meal": "Pranzo",
+                  "note": "INSALATONA",
+                  "days": ["MAR"]
+                },
+                {
+                  "food": "LENTICCHIE IN SCATOLA",
+                  "qty": "150 g",
+                  "meal": "Pranzo",
+                  "note": "SGOCCIOLATE",
+                  "days": ["MER"]
+                },
+                { "food": "POMODORI DA INSALATA", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "TONNO", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "PANE INTEGRALE", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["GIO", "VEN"] },
+                { "food": "RUCOLA", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "POMODORI", "qty": "120 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "RISO BASMATI", "qty": "30 g", "meal": "Pranzo", "note": "", "days": ["GIO"] },
+                { "food": "HAMBURGER DI BOVINO", "qty": "120 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                { "food": "INSALATA", "qty": "100 g", "meal": "Pranzo", "note": "INSALATONA", "days": ["VEN"] },
+                { "food": "POMODORI", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["VEN"] },
+                { "food": "FAGIOLINI", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                { "food": "ZUCCHINE", "qty": "200 g", "meal": "Pranzo", "note": "INSALATONA", "days": ["SAB"] },
+                { "food": "RISO INTEGRALE", "qty": "60 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                { "food": "TOFU", "qty": "150 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                {
+                  "food": "POMODORI DA INSALATA",
+                  "qty": "200 g",
+                  "meal": "Pranzo",
+                  "note": "INSALATONA",
+                  "days": ["DOM"]
+                },
+                { "food": "PASTA DI SEMOLA", "qty": "60 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                { "food": "SALMONE", "qty": "150 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                { "food": "PATATE", "qty": "100 g", "meal": "Cena", "note": "", "days": ["LUN", "MER"] },
+                { "food": "ZUCCHINE", "qty": "200 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB"]
+                },
+                {
+                  "food": "PANE DI GRANO DURO",
+                  "qty": "50 g",
+                  "meal": "Cena",
+                  "note": "",
+                  "days": ["LUN", "MAR", "GIO", "SAB"]
+                },
+                { "food": "UOVA DI GALLINA", "qty": "110 g", "meal": "Cena", "note": "2 UOVA", "days": ["MAR", "DOM"] },
+                { "food": "SPINACI", "qty": "200 g", "meal": "Cena", "note": "", "days": ["MAR", "VEN"] },
+                { "food": "PETTO DI POLLO", "qty": "150 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "PASTA DI SEMOLA INTEGRALE", "qty": "60 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "MELANZANE", "qty": "200 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "PANE DI GRANO DURO", "qty": "30 g", "meal": "Cena", "note": "", "days": ["MER", "VEN"] },
+                { "food": "MERLUZZO", "qty": "180 g", "meal": "Cena", "note": "", "days": ["GIO"] },
+                { "food": "RISO BASMATI", "qty": "60 g", "meal": "Cena", "note": "", "days": ["GIO"] },
+                { "food": "FINOCCHIO", "qty": "200 g", "meal": "Cena", "note": "", "days": ["GIO"] },
+                {
+                  "food": "FILETTI DI ORATA D'ALLEVAMENTO",
+                  "qty": "180 g",
+                  "meal": "Cena",
+                  "note": "",
+                  "days": ["VEN"]
+                },
+                { "food": "PATATE NOVELLE", "qty": "100 g", "meal": "Cena", "note": "", "days": ["VEN"] },
+                { "food": "Hamburger di chianina", "qty": "120 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                { "food": "POMODORI DA INSALATA", "qty": "200 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                { "food": "PATATE DOLCI AMERICANE", "qty": "100 g", "meal": "Cena", "note": "", "days": ["DOM"] },
+                { "food": "PEPERONI DOLCI", "qty": "200 g", "meal": "Cena", "note": "", "days": ["DOM"] },
+                { "food": "OLIO DI OLIVA EXTRAVERGINE", "qty": "10 g", "meal": "Cena", "note": "", "days": ["DOM"] }
+              ],
+              "check": "MAR 873 su 1200 kcal · DOM -144"
+            },
+            {
+              "label": "D",
+              "rows": [
+                {
+                  "food": "FRUTTA FRESCA",
+                  "qty": "150 g",
+                  "meal": "Spuntino",
+                  "note": "1 FRUTTO GRANDE O DUE PICCOLI",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "GALLETTE DI FARRO", "qty": "48 g", "meal": "Pranzo", "note": "6 GALLETTE", "days": ["LUN"] },
+                {
+                  "food": "TONNO AL NATURALE RIOMARE",
+                  "qty": "120 g",
+                  "meal": "Pranzo",
+                  "note": "2 SCATOLETTE DA 80 G",
+                  "days": ["LUN", "DOM"]
+                },
+                {
+                  "food": "INSALATA",
+                  "qty": "100 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "DOM"]
+                },
+                {
+                  "food": "POMODORINI",
+                  "qty": "100 g",
+                  "meal": "Pranzo",
+                  "note": "",
+                  "days": ["LUN", "MAR", "GIO", "VEN", "SAB"]
+                },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Pranzo",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "PANE INTEGRALE", "qty": "100 g", "meal": "Pranzo", "note": "2 FETTE", "days": ["MAR"] },
+                {
+                  "food": "PROSCIUTTO COTTO SENZA GRASSO",
+                  "qty": "80 g",
+                  "meal": "Pranzo",
+                  "note": "4 FETTE",
+                  "days": ["MAR"]
+                },
+                { "food": "riso precotto gallo", "qty": "200 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "mais dolce prix", "qty": "80 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                { "food": "FETA", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["MER"] },
+                {
+                  "food": "Pan Bauletto bianco, Mulino bianco",
+                  "qty": "50 g",
+                  "meal": "Pranzo",
+                  "note": "2 FETTE",
+                  "days": ["GIO"]
+                },
+                {
+                  "food": "HAMBURGER DI BOVINO",
+                  "qty": "120 g",
+                  "meal": "Pranzo",
+                  "note": "1 BURGER",
+                  "days": ["GIO"]
+                },
+                { "food": "PANE INTEGRALE", "qty": "80 g", "meal": "Pranzo", "note": "2 FETTE", "days": ["VEN"] },
+                { "food": "PETTO DI POLLO", "qty": "130 g", "meal": "Pranzo", "note": "1 PETTO", "days": ["VEN"] },
+                {
+                  "food": "Piadina integrale mulino bianco",
+                  "qty": "75 g",
+                  "meal": "Pranzo",
+                  "note": "1 PIADINA",
+                  "days": ["SAB"]
+                },
+                { "food": "BRESAOLA", "qty": "40 g", "meal": "Pranzo", "note": "4-5 FETTE", "days": ["SAB"] },
+                { "food": "RUCOLA", "qty": "50 g", "meal": "Pranzo", "note": "", "days": ["SAB"] },
+                { "food": "GALLETTE DI RISO", "qty": "30 g", "meal": "Pranzo", "note": "3 GALLETTE", "days": ["DOM"] },
+                { "food": "CAROTE", "qty": "100 g", "meal": "Pranzo", "note": "", "days": ["DOM"] },
+                {
+                  "food": "FRUTTA FRESCA",
+                  "qty": "150 g",
+                  "meal": "Merenda",
+                  "note": "1 FRUTTO GRANDE O DUE PICCOLI",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "INSALATA",
+                  "qty": "200 g",
+                  "meal": "Cena",
+                  "note": "",
+                  "days": ["LUN", "MAR", "MER", "GIO"]
+                },
+                {
+                  "food": "POMODORINI",
+                  "qty": "100 g",
+                  "meal": "Cena",
+                  "note": "",
+                  "days": ["LUN", "MER", "GIO", "DOM"]
+                },
+                { "food": "MOZZARELLA LIGHT MILBONA", "qty": "100 g", "meal": "Cena", "note": "", "days": ["LUN"] },
+                {
+                  "food": "PANE INTEGRALE",
+                  "qty": "80 g",
+                  "meal": "Cena",
+                  "note": "2 FETTE",
+                  "days": ["LUN", "MAR", "GIO", "VEN", "SAB", "DOM"]
+                },
+                {
+                  "food": "OLIO DI OLIVA EXTRAVERGINE",
+                  "qty": "10 g",
+                  "meal": "Cena",
+                  "note": "1 CUCCHIAIO",
+                  "days": ["LUN", "MAR", "MER", "GIO", "VEN", "SAB", "DOM"]
+                },
+                { "food": "RUCOLA", "qty": "50 g", "meal": "Cena", "note": "", "days": ["MAR"] },
+                { "food": "UOVA DI GALLINA", "qty": "100 g", "meal": "Cena", "note": "2 UOVA SODE", "days": ["MAR"] },
+                { "food": "SALMONE AFFUMICATO", "qty": "60 g", "meal": "Cena", "note": "", "days": ["MER"] },
+                { "food": "CAROTE", "qty": "100 g", "meal": "Cena", "note": "", "days": ["MER", "VEN"] },
+                { "food": "GALLETTE DI FARRO", "qty": "30 g", "meal": "Cena", "note": "4 GALLETTE", "days": ["MER"] },
+                { "food": "CECI IN SCATOLA", "qty": "200 g", "meal": "Cena", "note": "SGOCCIOLATI", "days": ["GIO"] },
+                { "food": "INSALATA", "qty": "100 g", "meal": "Cena", "note": "", "days": ["VEN", "SAB", "DOM"] },
+                {
+                  "food": "LENTICCHIE IN SCATOLA",
+                  "qty": "150 g",
+                  "meal": "Cena",
+                  "note": "SGOCCIOLATE",
+                  "days": ["VEN"]
+                },
+                { "food": "GALLETTE DI RISO", "qty": "30 g", "meal": "Cena", "note": "3 GALLETTE", "days": ["VEN"] },
+                { "food": "GAMBERETTI SURGELATI", "qty": "150 g", "meal": "Cena", "note": "", "days": ["SAB"] },
+                { "food": "CECI IN SCATOLA", "qty": "150 g", "meal": "Cena", "note": "SGOCCIOLATI", "days": ["DOM"] }
+              ],
+              "check": "SAB 1016 su 1200 kcal · DOM -200"
+            }
+          ]
+        }
+      ]
+    </script>
+    <script>
+      (() => {
+        const DATA = JSON.parse(document.getElementById('data').textContent);
+        const DAYS = ['LUN', 'MAR', 'MER', 'GIO', 'VEN', 'SAB', 'DOM'];
+        const MEALS = ['Colazione', 'Spuntino', 'Pranzo', 'Merenda', 'Cena'];
+        const CRIT = [
+          ['gradimento', 'Gradimento', 'la settimana che il paziente mangerebbe davvero'],
+          ['varieta', 'Varietà', 'rotazione di pesce, carne, uova, legumi; non la stessa cena'],
+          ['vincoli', 'Vincoli rispettati', 'gusti, patologie, struttura dei pasti richiesta'],
+          ['porzioni', 'Porzioni', 'quantità e misure di casa realistiche'],
+          ['note', 'Note utili', 'le note sulle righe aiutano o sono rumore'],
+        ];
+        const VERDICT = [
+          ['si', 'La manderei così'],
+          ['ritocchi', 'Con qualche ritocco'],
+          ['no', 'Non la manderei'],
+        ];
+        const KEY = 'blind-review-2026-09-07';
+        const state = (() => {
+          try {
+            return JSON.parse(localStorage.getItem(KEY) || '{}');
+          } catch {
+            return {};
+          }
+        })();
+        const save = () => {
+          try {
+            localStorage.setItem(KEY, JSON.stringify(state));
+          } catch {}
+          const s = document.getElementById('saved');
+          s.textContent = 'salvato ' + new Date().toLocaleTimeString('it-IT');
+        };
+        const esc = (t) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+        const who = document.getElementById('who');
+        who.value = state.who || '';
+        who.addEventListener('input', () => {
+          state.who = who.value;
+          save();
+        });
+
+        const cell = (rows, meal, day) => {
+          const list = rows.filter((r) => r.meal === meal && r.days.includes(day));
+          if (list.length === 0) return '<td></td>';
+          return (
+            '<td><ul>' +
+            list
+              .map(
+                (r) =>
+                  `<li><b>${esc(r.food.toLowerCase())}</b> <span class="q">${esc(r.qty)}</span>${r.note ? ` <span class="n">(${esc(r.note.toLowerCase())})</span>` : ''}</li>`
+              )
+              .join('') +
+            '</ul></td>'
+          );
+        };
+        const grid = (rows) => {
+          const meals = MEALS.filter((m) => rows.some((r) => r.meal === m)).concat(
+            [...new Set(rows.map((r) => r.meal))].filter((m) => !MEALS.includes(m))
+          );
+          return `<div class="gridwrap"><table><thead><tr><th class="meal"></th>${DAYS.map((d) => `<th>${d}</th>`).join('')}</tr></thead><tbody>${meals.map((m) => `<tr><th class="meal">${esc(m)}</th>${DAYS.map((d) => cell(rows, m, d)).join('')}</tr>`).join('')}</tbody></table></div>`;
+        };
+        const stars = (id, value) =>
+          `<div class="stars" data-for="${id}">${[1, 2, 3, 4, 5].map((n) => `<input type="radio" name="${id}" id="${id}-${n}" value="${n}" ${value === n ? 'checked' : ''}><label for="${id}-${n}" class="${value >= n ? 'on' : ''}" title="${n}">★</label>`).join('')}</div>`;
+        const scoreBlock = (bid, label) => {
+          const s = (state[bid] || {})[label] || {};
+          return `<div class="card score" data-brief="${bid}" data-label="${label}">
+      ${CRIT.map(([k, name, hint]) => `<div class="crit"><span class="name">${name}</span><span class="hint">${hint}</span>${stars(`${bid}-${label}-${k}`, s[k] || 0)}</div>`).join('')}
+      <div class="crit"><span class="name">Verdetto</span><span class="hint">come la useresti</span><div class="verdict">${VERDICT.map(([v, t]) => `<label class="${s.verdetto === v ? 'on' : ''}"><input type="radio" name="${bid}-${label}-verdetto" value="${v}" ${s.verdetto === v ? 'checked' : ''}>${t}</label>`).join('')}</div></div>
+      <div class="crit" style="grid-column:1/-1"><span class="name">Che cosa cambieresti</span><textarea data-k="commento" placeholder="una riga basta">${esc(s.commento || '')}</textarea></div>
+    </div>`;
+        };
+        const briefBlock = (b) => `<section class="brief" id="${b.id}" hidden>
+    <div class="card"><p class="brief-text">${esc(b.text)}</p><p class="answers">Risposte date quando lo strumento ha chiesto: ${b.answers.map((a) => `<span>${esc(a)}</span>`).join('')}</p></div>
+    ${b.plans.map((p) => `<article class="plan"><div class="plan-head"><span class="label">${p.label}</span><span class="check">${esc(p.check)}</span></div>${grid(p.rows)}${scoreBlock(b.id, p.label)}</article>`).join('')}
+    <div class="card best" data-brief="${b.id}"><span><b>La migliore delle quattro</b></span>${b.plans.map((p) => `<label class="${(state[b.id] || {}).migliore === p.label ? 'on' : ''}"><input type="radio" name="${b.id}-migliore" value="${p.label}" ${(state[b.id] || {}).migliore === p.label ? 'checked' : ''}>${p.label}</label>`).join('')}</div>
+  </section>`;
+
+        const tabs = document.getElementById('tabs');
+        const main = document.getElementById('main');
+        main.innerHTML = DATA.map(briefBlock).join('');
+        tabs.innerHTML = DATA.map(
+          (b, i) =>
+            `<button role="tab" aria-selected="${i === 0}" data-target="${b.id}">${i + 1}. ${esc(b.title)}</button>`
+        ).join('');
+        const show = (id) => {
+          for (const s of main.children) s.hidden = s.id !== id;
+          for (const t of tabs.children) t.setAttribute('aria-selected', String(t.dataset.target === id));
+          window.scrollTo(0, 0);
+        };
+        tabs.addEventListener('click', (e) => {
+          const t = e.target.closest('button');
+          if (t) show(t.dataset.target);
+        });
+        show(DATA[0].id);
+
+        main.addEventListener('change', (e) => {
+          const input = e.target;
+          if (input.type !== 'radio') return;
+          const best = input.closest('.best');
+          if (best) {
+            state[best.dataset.brief] = state[best.dataset.brief] || {};
+            state[best.dataset.brief].migliore = input.value;
+            for (const l of best.querySelectorAll('label')) l.classList.toggle('on', l.querySelector('input').checked);
+            save();
+            return;
+          }
+          const block = input.closest('.score');
+          if (!block) return;
+          const { brief, label } = block.dataset;
+          state[brief] = state[brief] || {};
+          state[brief][label] = state[brief][label] || {};
+          const k = input.name.split('-').pop();
+          state[brief][label][k] = k === 'verdetto' ? input.value : Number(input.value);
+          const box = input.closest('.stars, .verdict');
+          if (box.classList.contains('stars')) {
+            const v = Number(input.value);
+            box.querySelectorAll('label').forEach((l, i) => l.classList.toggle('on', i < v));
+          } else
+            for (const l of box.querySelectorAll('label')) l.classList.toggle('on', l.querySelector('input').checked);
+          save();
+        });
+        main.addEventListener('input', (e) => {
+          const ta = e.target;
+          if (ta.tagName !== 'TEXTAREA') return;
+          const block = ta.closest('.score');
+          const { brief, label } = block.dataset;
+          state[brief] = state[brief] || {};
+          state[brief][label] = state[brief][label] || {};
+          state[brief][label].commento = ta.value;
+          save();
+        });
+
+        const payload = () => JSON.stringify({ review: KEY, at: new Date().toISOString(), ...state }, null, 1);
+        document.getElementById('export').addEventListener('click', () => {
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(new Blob([payload()], { type: 'application/json' }));
+          a.download = `valutazione-${(state.who || 'anonimo').replace(/\W+/g, '-').toLowerCase()}.json`;
+          a.click();
+          URL.revokeObjectURL(a.href);
+        });
+        document.getElementById('copy').addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(payload());
+            document.getElementById('saved').textContent = 'copiato';
+          } catch {
+            document.getElementById('saved').textContent = 'copia non riuscita: usa Scarica';
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
